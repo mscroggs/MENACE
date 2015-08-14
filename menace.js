@@ -14,7 +14,7 @@
 /*         Matthew Scroggs         */
 /*    http://www.mscroggs.co.uk    */
 /***********************************/
-
+alert(2)
 boxes = Array()
 
 pwns = Array(
@@ -102,7 +102,7 @@ function add_win(n){
 function three(pos){
     for(var i=0;i<pwns.length;i++){
         if(pos[pwns[i][0]]!="0" && pos[pwns[i][0]]==pos[pwns[i][1]] && pos[pwns[i][1]]==pos[pwns[i][2]]){
-            return(pos[pwns[i][0]]/1)
+            return(parseInt(pos[pwns[i][0]]))
         }
     }
     return(0)
@@ -203,6 +203,8 @@ function reset_menace(){
             }
             add_box(pos,moves)
     }}} }}}}}}
+    show_menace()
+    new_game()
 }
 
 function make_ox(pos){
@@ -227,8 +229,60 @@ function make_ox(pos){
     return output
 }
 
+function show_set(){
+    document.getElementById("im1").value=parseInt(s[0])
+    document.getElementById("im3").value=parseInt(s[1])
+    document.getElementById("im5").value=parseInt(s[2])
+    document.getElementById("im7").value=parseInt(s[3])
+    document.getElementById("ic_w").value=parseInt(incentives[0])
+    document.getElementById("ic_d").value=parseInt(incentives[1])
+    document.getElementById("ic_l").value=parseInt(incentives[2])
+    document.getElementById("tweak_h").style.display="block"
+    document.getElementById("tweak_s").style.display="none"
+}
+function hide_set(){
+    document.getElementById("tweak_h").style.display="none"
+    document.getElementById("tweak_s").style.display="block"
+}
+function update_set_r(){
+    update_set()
+    reset_menace()
+}
+function update_set(){
+    s[0]=document.getElementById("im1").value
+    s[1]=document.getElementById("im3").value
+    s[2]=document.getElementById("im5").value
+    s[3]=document.getElementById("im7").value
+    incentives[0]=document.getElementById("ic_w").value
+    incentives[1]=document.getElementById("ic_d").value
+    incentives[2]=document.getElementById("ic_l").value
+    hide_set()
+}
+
 function show_menace(){
-    output="<table>"
+    output=""
+    output+="<span id='tweak_s'><a href='javascript:show_set()'>Adjust MENACE's settings</a></span>"
+    output+="<span id='tweak_h' style='display:none'><a href='javascript:hide_set()'>Hide settings</a><br />"
+    output+="Inital marbles<br /><small>"
+    output+="First Moves: <input size=1 id='im1' /> "
+    output+="Third Moves: <input size=1 id='im3' /><br />"
+    output+="Fifth Moves: <input size=1 id='im5' /> "
+    output+="Seventh Moves: <input size=1 id='im7'></small><br />"
+    output+="Incentives<br /><small>"
+    output+="Win: Add <input size=1 id='ic_w' /> marbles<br/>"
+    output+="Draw: Add <input size=1 id='ic_d' /> marbles<br/>"
+    output+="Lose: Take <input size=1 id='ic_l' /> marbles<br/>"
+    output+="<form onsubmit='update_set();return false'>"
+    output+="<input type='submit' value='Update MENACE'>"
+    output+="</form>"
+    output+="<form onsubmit='update_set_r();return false'>"
+    output+="<input type='submit' value='Update and reset MENACE'>"
+    output+="</form>"
+    output+="</span>"
+
+    output+="</form>"
+    output+="</span>"
+    output+="<table>"
     cols=0
     numb=0
     for(var key in boxes){
@@ -239,8 +293,8 @@ function show_menace(){
         if(cols==8){output+=("</tr>");cols=0}
     }
     if(cols!=0){output+=("</tr>")}
-    output+=("</table>")
-    output=numb+" matchboxes."+output
+    output+=("</table><br /><br />")
+    output="These are the "+numb+" matchboxes which power MENACE.<br />"+output
     document.getElementById("moves").innerHTML=output
 }
 
@@ -248,24 +302,28 @@ function update_box(key){
     document.getElementById("board"+key).innerHTML=make_ox(key)
 }
 
+incentives=Array(3,1,1)
+
+function box_add(pos,move,change){
+    boxes[pos][move]=Math.max(0,parseInt(change)+parseInt(boxes[pos][move]))
+    update_box(pos)
+}
+
 function menace_win(){
     for(var i=0;i<moves.length;i++){
-        boxes[moves[i][0]][moves[i][1]]+=3
-        update_box(moves[i][0])
+        box_add(moves[i][0],moves[i][1],incentives[0])
     }
     add_win(1)
 }
 function menace_draw(){
     for(var i=0;i<moves.length-1;i++){
-        boxes[moves[i][0]][moves[i][1]]+=1
-        update_box(moves[i][0])
+        box_add(moves[i][0],moves[i][1],incentives[1])
     }
     add_win(2)
 }
 function menace_lose(){
     for(var i=0;i<moves.length;i++){
-        boxes[moves[i][0]][moves[i][1]]-=1
-        update_box(moves[i][0])
+        box_add(moves[i][0],moves[i][1],-incentives[2])
     }
     add_win(3)
 }
@@ -339,8 +397,3 @@ function make_move(plays){
 }
 
 reset_menace()
-
-show_menace()
-
-new_game()
-
