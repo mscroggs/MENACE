@@ -14,7 +14,7 @@
 /*         Matthew Scroggs         */
 /*    http://www.mscroggs.co.uk    */
 /***********************************/
-alert(2)
+
 boxes = Array()
 
 pwns = Array(
