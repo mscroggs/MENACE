@@ -344,4 +344,3 @@ show_menace()
 
 new_game()
 
-document.write("hello")
