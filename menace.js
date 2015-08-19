@@ -15,6 +15,9 @@
 /*    http://www.mscroggs.co.uk    */
 /***********************************/
 
+s=Array(4,3,2,1)
+incentives=Array(3,1,1)
+
 boxes = Array()
 
 pwns = Array(
@@ -93,7 +96,6 @@ function say(stuff){
     document.getElementById("list_here").innerHTML=said.join("<br />")
 }
 
-wins_each=Array(0,0,0)
 
 function add_win(n){
     wins_each[n-1]+=1
@@ -139,9 +141,10 @@ function do_win(who_wins){
     window.setTimeout(new_game,1000)
 }
 
-s=Array(8,4,2,1)
 
 function reset_menace(){
+    wins_each=Array(0,0,0)
+
     // First moves
     add_box("000000000",Array(s[0],s[0],s[0],s[0],s[0],s[0],s[0],s[0],s[0]))
 
@@ -302,7 +305,6 @@ function update_box(key){
     document.getElementById("board"+key).innerHTML=make_ox(key)
 }
 
-incentives=Array(3,1,1)
 
 function box_add(pos,move,change){
     boxes[pos][move]=Math.max(0,parseInt(change)+parseInt(boxes[pos][move]))
