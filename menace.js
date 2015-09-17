@@ -15,7 +15,7 @@
 /*    http://www.mscroggs.co.uk    */
 /***********************************/
 
-s=Array(4,3,2,1)
+s=Array(8,4,2,1)
 incentives=Array(3,1,1)
 
 boxes = Array()
