@@ -22,6 +22,7 @@ human_turn=false
 
 whoA = {"h":"Human","r":"Random","m":"MENACE2"}
 
+
 function setPlayer(setTo){
     player=setTo
     moves2 = Array()
@@ -576,7 +577,7 @@ function make_move2(plays){
     }
     if(total==0){
         say("MENACE2 resigns.")
-        do_win(0)
+        do_win(1)
     } else {
         rnd = Math.floor(Math.random()*total)
         total = 0
