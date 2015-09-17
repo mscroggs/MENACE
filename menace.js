@@ -24,13 +24,18 @@ whoA = {"h":"Human","r":"Random","m":"MENACE2"}
 
 function setPlayer(setTo){
     player=setTo
+    moves2 = Array()
     document.getElementById("who").innerHTML = whoA[setTo]
     if(setTo=="r" && human_turn){
         play_random()
     }
+    if(setTo=="m" && human_turn){
+        play_menace2()
+    }
 }
 
 boxes = Array()
+boxes2 = Array()
 
 pwns = Array(
     Array(0,1,2),
@@ -64,18 +69,33 @@ function apply_rotation(pos,rot){
     return(new_pos)
 }
 
-function add_box(pos,moves){
+function add_box(pos,dummy_moves){
     rots=find_rotations(pos)
     if(three(pos)=="0" && rots[0]==0){
         for(var i=1;i<rots.length;i++){
             r=rotations[rots[i]]
             for(var j=0;j<9;j++){
                 if(r[j]!=j){
-                    moves[Math.min(j,r[j])]=0
+                    dummy_moves[Math.min(j,r[j])]=0
                 }
             }
         }
-        boxes[pos]=moves
+        boxes[pos]=dummy_moves
+    }
+}
+
+function add_box2(pos,dummy_moves){
+    rots=find_rotations(pos)
+    if(three(pos)=="0" && rots[0]==0){
+        for(var i=1;i<rots.length;i++){
+            r=rotations[rots[i]]
+            for(var j=0;j<9;j++){
+                if(r[j]!=j){
+                    dummy_moves[Math.min(j,r[j])]=0
+                }
+            }
+        }
+        boxes2[pos]=dummy_moves
     }
 }
 
@@ -164,63 +184,141 @@ function reset_menace(){
     // Third moves
     for(var i=0;i<9;i++){for(var j=0;j<9;j++){if(i!=j){
             pos=""
-            moves=Array()
+            dummy_moves=Array()
             for(var a=0;a<9;a++){
                 if(a==i){
                     pos+="1"
-                    moves.push(0)
+                    dummy_moves.push(0)
                 } else if(a==j){
                     pos+="2"
-                    moves.push(0)
+                    dummy_moves.push(0)
                 } else {
                     pos+="0"
-                    moves.push(s[1])
+                    dummy_moves.push(s[1])
                 }
             }
-            add_box(pos,moves)
+            add_box(pos,dummy_moves)
     } }}
 
     // Fifth moves
     for(var i=0;i<9;i++){for(var k=0;k<i;k++){
     for(var j=0;j<9;j++){if(i!=j && k!=j){for(var l=0;l<j;l++){if(i!=l && k!=l){
             pos=""
-            moves=Array()
+            dummy_moves=Array()
             for(var a=0;a<9;a++){
                 if(a==i || a==k){
                     pos+="1"
-                    moves.push(0)
+                    dummy_moves.push(0)
                 } else if(a==j || a==l){
                     pos+="2"
-                    moves.push(0)
+                    dummy_moves.push(0)
                 } else {
                     pos+="0"
-                    moves.push(s[2])
+                    dummy_moves.push(s[2])
                 }
             }
-            add_box(pos,moves)
+            add_box(pos,dummy_moves)
     }} }}}}
     
     // Seventh moves
     for(var i=0;i<9;i++){for(var k=0;k<i;k++){for(var m=0;m<k;m++){
     for(var j=0;j<9;j++){if(i!=j && k!=j && m!=j){for(var l=0;l<j;l++){if(i!=l && k!=l && m!=l){for(var n=0;n<l;n++){if(i!=n && k!=n && m!=n){
             pos=""
-            moves=Array()
+            dummy_moves=Array()
             for(var a=0;a<9;a++){
                 if(a==i || a==k || a==m){
                     pos+="1"
-                    moves.push(0)
+                    dummy_moves.push(0)
                 } else if(a==j || a==l || a==n){
                     pos+="2"
-                    moves.push(0)
+                    dummy_moves.push(0)
                 } else {
                     pos+="0"
-                    moves.push(s[3])
+                    dummy_moves.push(s[3])
                 }
             }
-            add_box(pos,moves)
+            add_box(pos,dummy_moves)
     }}} }}}}}}
     show_menace()
     new_game()
+}
+
+function reset_menace2(){
+    // Second moves
+    for(var i=0;i<9;i++){
+            pos=""
+            dummy_moves=Array()
+            for(var a=0;a<9;a++){
+                if(a==i){
+                    pos+="1"
+                    dummy_moves.push(0)
+                } else {
+                    pos+="0"
+                    dummy_moves.push(s[0])
+                }
+            }
+            add_box2(pos,dummy_moves)
+    }
+
+    // Fourth moves
+    for(var i=0;i<9;i++){for(var k=0;k<i;k++){
+    for(var j=0;j<9;j++){if(i!=j && k!=l){
+            pos=""
+            dummy_moves=Array()
+            for(var a=0;a<9;a++){
+                if(a==i || a==k){
+                    pos+="1"
+                    dummy_moves.push(0)
+                } else if(a==j){
+                    pos+="2"
+                    dummy_moves.push(0)
+                } else {
+                    pos+="0"
+                    dummy_moves.push(s[1])
+                }
+            }
+            add_box2(pos,dummy_moves)
+    }} }}
+
+    // Sixth moves
+    for(var i=0;i<9;i++){for(var k=0;k<i;k++){for(var m=0;m<k;m++){
+    for(var j=0;j<9;j++){if(i!=j && k!=j){for(var l=0;l<j;l++){if(i!=l && k!=l){
+            pos=""
+            dummy_moves=Array()
+            for(var a=0;a<9;a++){
+                if(a==i || a==k || a==m){
+                    pos+="1"
+                    dummy_moves.push(0)
+                } else if(a==j || a==l){
+                    pos+="2"
+                    dummy_moves.push(0)
+                } else {
+                    pos+="0"
+                    dummy_moves.push(s[2])
+                }
+            }
+            add_box2(pos,dummy_moves)
+    }}} }}}}
+    
+    // Eighth moves
+    for(var i=0;i<9;i++){for(var k=0;k<i;k++){for(var m=0;m<k;m++){for(var o=0;o<m;o++){
+    for(var j=0;j<9;j++){if(i!=j && k!=j && m!=j){for(var l=0;l<j;l++){if(i!=l && k!=l && m!=l){for(var n=0;n<l;n++){if(i!=n && k!=n && m!=n){
+            pos=""
+            dummy_moves=Array()
+            for(var a=0;a<9;a++){
+                if(a==i || a==k || a==m || a==o){
+                    pos+="1"
+                    dummy_moves.push(0)
+                } else if(a==j || a==l || a==n){
+                    pos+="2"
+                    dummy_moves.push(0)
+                } else {
+                    pos+="0"
+                    dummy_moves.push(s[3])
+                }
+            }
+            add_box2(pos,dummy_moves)
+    }}}} }}}}}}
 }
 
 function make_ox(pos){
@@ -263,6 +361,7 @@ function hide_set(){
 function update_set_r(){
     update_set()
     reset_menace()
+    reset_menace2()
 }
 function update_set(){
     s[0]=document.getElementById("im1").value
@@ -324,15 +423,30 @@ function box_add(pos,move,change){
     update_box(pos)
 }
 
+function box_add2(pos,move,change){
+    boxes2[pos][move]=Math.max(0,parseInt(change)+parseInt(boxes2[pos][move]))
+}
+
 function menace_win(){
     for(var i=0;i<moves.length;i++){
         box_add(moves[i][0],moves[i][1],incentives[0])
     }
+    if(player=="m"){
+    for(var i=0;i<moves2.length;i++){
+        box_add2(moves2[i][0],moves2[i][1],incentives[0])
+    }
+    }
+
     add_win(1)
 }
 function menace_draw(){
     for(var i=0;i<moves.length-1;i++){
         box_add(moves[i][0],moves[i][1],incentives[1])
+    }
+    if(player=="m"){
+    for(var i=0;i<moves2.length;i++){
+        box_add2(moves2[i][0],moves2[i][1],incentives[1])
+    }
     }
     add_win(2)
 }
@@ -340,15 +454,17 @@ function menace_lose(){
     for(var i=0;i<moves.length;i++){
         box_add(moves[i][0],moves[i][1],-incentives[2])
     }
+    if(player=="m"){
+    for(var i=0;i<moves2.length;i++){
+        box_add2(moves2[i][0],moves2[i][1],-incentives[2])
+    }
+    }
     add_win(3)
 }
 
-//global moves
-//global board
-//global no_winner
-
 function new_game(){
     moves=Array()
+    moves2=Array()
     board=Array(0,0,0,0,0,0,0,0,0)
     no_winner=true
     for(var i=0;i<9;i++){
@@ -376,9 +492,27 @@ function play_menace(){
     if(no_winner){
         if(player=='r'){
             play_random()
+        } else if(player=='m'){
+            play_menace2()
         } else if(player=='h'){
             human_turn=true
         }
+    }
+}
+
+function play_menace2(){
+    pos=board.join("")
+    which_rot=find_rotation(pos)
+    pos=apply_rotation(pos,rotations[which_rot])
+    plays=boxes2[pos]
+    where=make_move2(plays)
+    inv_where=rotations[which_rot][where]
+    moves2.push(Array(pos,where))
+    board[inv_where]=2
+    document.getElementById("pos"+inv_where).innerHTML="&times;"
+    check_win()
+    if(no_winner){
+        window.setTimeout(play_menace,100)
     }
 }
 
@@ -435,4 +569,23 @@ function make_move(plays){
     }
 }
 
+function make_move2(plays){
+    total=0
+    for(var i=0;i<plays.length;i++){
+        total+=plays[i]
+    }
+    if(total==0){
+        say("MENACE2 resigns.")
+        do_win(0)
+    } else {
+        rnd = Math.floor(Math.random()*total)
+        total = 0
+        for(var i=0;i<plays.length;i++){
+            total+=plays[i]
+            if(rnd<total){return(i)}
+        }
+    }
+}
+
 reset_menace()
+reset_menace2()
