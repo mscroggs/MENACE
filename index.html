@@ -9,7 +9,7 @@ td.num {font-weight:bold;color:#000000}
 table.board td {font-family:monospace;text-align:center;vertical-align:middle}
 table.board:not(.large) td {font-size:9px;width:8px;height:8px}
 table.board.large td {font-size:22px;width:40px;height:40px;}
-table.board.large {position:absolute;left:195px;top:20px}
+table.board.large {position:absolute;left:105px;top:20px}
 table.board td,table.board tr, table.board {border-collapse:collapse}
 table.board td.p1,table.board td.p7 {border-left:1px solid grey;border-right:1px solid grey}
 table.board td.p3,table.board td.p5 {border-top:1px solid grey;border-bottom:1px solid grey}
@@ -21,6 +21,7 @@ table.board td.p4 {border:1px solid grey;}
 .wins#n3 {left:355px}
 .dis {font-size:32px}
 table.board td form {margin:0px}
+.players {position:absolute;left:280px;top:30px}
 </style>
 <span id='moves' style='position:absolute;right:5px'></span>
 <table class='board large'>
@@ -40,9 +41,13 @@ table.board td form {margin:0px}
     <td id='pos8' class='p8'></td>
 </tr>
 </table>
-<div class='wins' id='n1'>MENACE Wins<br /><span class='dis' id='dis1'>0</span></div>
-<div class='wins' id='n2'>Draws<br /><span class='dis' id='dis2'>0</span></div>
-<div class='wins' id='n3'>Human Wins<br /><span class='dis' id='dis3'>0</span></div>
+<div class='players'>O: MENACE<br />X:<select onchange='setPlayer(this.value)'>
+<option selected value='h'>Human</option>
+<option value='r'>Random</option>
+</select></div>
+<div class='wins' id='n1'><small>MENACE Wins</small><br /><span class='dis' id='dis1'>0</span></div>
+<div class='wins' id='n2'><small>Draws</small><br /><span class='dis' id='dis2'>0</span></div>
+<div class='wins' id='n3'><small><span id='who'>Human</span> Wins</small><br /><span class='dis' id='dis3'>0</span></div>
 <div class='summary' id='list_here'></div>
 
 <script type='text/javascript' src='menace.js'></script>

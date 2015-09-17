@@ -17,6 +17,18 @@
 
 s=Array(8,4,2,1)
 incentives=Array(3,1,1)
+player='h'
+human_turn=false
+
+whoA = {"h":"Human","r":"Random","m":"MENACE2"}
+
+function setPlayer(setTo){
+    player=setTo
+    document.getElementById("who").innerHTML = whoA[setTo]
+    if(setTo=="r" && human_turn){
+        play_random()
+    }
+}
 
 boxes = Array()
 
@@ -125,6 +137,7 @@ function check_win(){
         if(who_wins==2){say("You win.")}
         if(who_wins==3){say("It's a draw.")}
         do_win(who_wins)
+        human_turn=false
     }
 }
 
@@ -360,15 +373,39 @@ function play_menace(){
     board[inv_where]=1
     document.getElementById("pos"+inv_where).innerHTML="&#9711;"
     check_win()
+    if(no_winner){
+        if(player=='r'){
+            play_random()
+        } else if(player=='h'){
+            human_turn=true
+        }
+    }
 }
 
 function play_human(where){
 if(no_winner){
+    human_turn=false
     board[where]=2
     document.getElementById("pos"+where).innerHTML="&times;"
     check_win()
     if(no_winner){
         play_menace()
+    }
+}}
+
+function play_random(){
+if(no_winner){
+    choices = Array()
+    for(var i=0;i<9;i++){
+        if(board[i]==0){choices[choices.length]=i;}
+    }
+    human_turn=false
+    where = choices[Math.floor(Math.random()*choices.length)]
+    board[where]=2
+    document.getElementById("pos"+where).innerHTML="&times;"
+    check_win()
+    if(no_winner){
+        window.setTimeout(play_menace,100)
     }
 }}
 
