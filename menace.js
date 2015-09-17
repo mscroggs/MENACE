@@ -155,7 +155,11 @@ function check_win(){
     who_wins=winner()
     if(who_wins!=0){
         if(who_wins==1){say("MENACE wins.")}
-        if(who_wins==2){say("You win.")}
+        if(who_wins==2){
+            if(player=='h'){say("You win.")}
+            if(player=='m'){say("MENACE2 wins.")}
+            if(player=='r'){say("Random wins.")}
+        }
         if(who_wins==3){say("It's a draw.")}
         do_win(who_wins)
         human_turn=false
