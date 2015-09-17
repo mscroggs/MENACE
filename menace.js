@@ -433,7 +433,7 @@ function menace_win(){
     }
     if(player=="m"){
     for(var i=0;i<moves2.length;i++){
-        box_add2(moves2[i][0],moves2[i][1],incentives[0])
+        box_add2(moves2[i][0],moves2[i][1],-incentives[2])
     }
     }
 
@@ -456,7 +456,7 @@ function menace_lose(){
     }
     if(player=="m"){
     for(var i=0;i<moves2.length;i++){
-        box_add2(moves2[i][0],moves2[i][1],-incentives[2])
+        box_add2(moves2[i][0],moves2[i][1],incentives[0])
     }
     }
     add_win(3)
