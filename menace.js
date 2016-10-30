@@ -15,6 +15,7 @@
 /*    http://www.mscroggs.co.uk    */
 /***********************************/
 
+orderedBoxes = Array()
 s=Array(8,4,2,1)
 incentives=Array(3,1,1)
 player='h'
@@ -81,6 +82,7 @@ function add_box(pos,dummy_moves){
                 }
             }
         }
+        orderedBoxes[orderedBoxes.length] = pos
         boxes[pos]=dummy_moves
     }
 }
@@ -182,6 +184,7 @@ function do_win(who_wins){
 
 function reset_menace(){
     wins_each=Array(0,0,0)
+    orderedBoxes = Array()
 
     // First moves
     add_box("000000000",Array(s[0],s[0],s[0],s[0],s[0],s[0],s[0],s[0],s[0]))
@@ -405,7 +408,8 @@ function show_menace(){
     output+="<table>"
     cols=0
     numb=0
-    for(var key in boxes){
+    for(var k=0;k<orderedBoxes.length;k++){
+        key = orderedBoxes[k]
         if(cols==0){output+=("<tr>")}
         cols+=1
         numb+=1
