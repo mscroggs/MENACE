@@ -496,6 +496,7 @@ function play_menace(){
         moves.push(Array(pos,where))
     }
     board[inv_where]=1
+    alert("-->"+inv_where)
     document.getElementById("pos"+inv_where).innerHTML="&#9711;"
     check_win()
     if(no_winner){
@@ -563,8 +564,10 @@ function num_empty(){
 function make_move(plays){
     total=0
     for(var i=0;i<plays.length;i++){
-        total+=plays[i]
+        total+=plays[i]/1
     }
+    alert(plays)
+    alert(total)
     if(total==0){
         say("MENACE resigns.")
         do_win(2)
@@ -572,7 +575,7 @@ function make_move(plays){
         rnd = Math.floor(Math.random()*total)
         total = 0
         for(var i=0;i<plays.length;i++){
-            total+=plays[i]
+            total+=plays[i]/1
             if(rnd<total){return(i)}
         }
     }
@@ -581,7 +584,7 @@ function make_move(plays){
 function make_move2(plays){
     total=0
     for(var i=0;i<plays.length;i++){
-        total+=plays[i]
+        total+=plays[i]/1
     }
     if(total==0){
         say("MENACE2 resigns.")
@@ -590,7 +593,7 @@ function make_move2(plays){
         rnd = Math.floor(Math.random()*total)
         total = 0
         for(var i=0;i<plays.length;i++){
-            total+=plays[i]
+            total+=plays[i]/1
             if(rnd<total){return(i)}
         }
     }
