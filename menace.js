@@ -496,7 +496,6 @@ function play_menace(){
         moves.push(Array(pos,where))
     }
     board[inv_where]=1
-    alert("-->"+inv_where)
     document.getElementById("pos"+inv_where).innerHTML="&#9711;"
     check_win()
     if(no_winner){
@@ -566,8 +565,6 @@ function make_move(plays){
     for(var i=0;i<plays.length;i++){
         total+=plays[i]/1
     }
-    alert(plays)
-    alert(total)
     if(total==0){
         say("MENACE resigns.")
         do_win(2)
