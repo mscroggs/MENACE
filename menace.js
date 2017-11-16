@@ -372,13 +372,13 @@ function update_set_r(){
     reset_menace2()
 }
 function update_set(){
-    s[0]=document.getElementById("im1").value
-    s[1]=document.getElementById("im3").value
-    s[2]=document.getElementById("im5").value
-    s[3]=document.getElementById("im7").value
-    incentives[0]=document.getElementById("ic_w").value
-    incentives[1]=document.getElementById("ic_d").value
-    incentives[2]=document.getElementById("ic_l").value
+    s[0]=parseInt(document.getElementById("im1").value)
+    s[1]=parseInt(document.getElementById("im3").value)
+    s[2]=parseInt(document.getElementById("im5").value)
+    s[3]=parseInt(document.getElementById("im7").value)
+    incentives[0]=parseInt(document.getElementById("ic_w").value)
+    incentives[1]=parseInt(document.getElementById("ic_d").value)
+    incentives[2]=parseInt(document.getElementById("ic_l").value)
     hide_set()
 }
 
@@ -563,7 +563,7 @@ function num_empty(){
 function make_move(plays){
     total=0
     for(var i=0;i<plays.length;i++){
-        total+=plays[i]/1
+        total+=plays[i]
     }
     if(total==0){
         say("MENACE resigns.")
@@ -572,7 +572,7 @@ function make_move(plays){
         rnd = Math.floor(Math.random()*total)
         total = 0
         for(var i=0;i<plays.length;i++){
-            total+=plays[i]/1
+            total+=plays[i]
             if(rnd<total){return(i)}
         }
     }
@@ -581,7 +581,7 @@ function make_move(plays){
 function make_move2(plays){
     total=0
     for(var i=0;i<plays.length;i++){
-        total+=plays[i]/1
+        total+=plays[i]
     }
     if(total==0){
         say("MENACE2 resigns.")
@@ -590,7 +590,7 @@ function make_move2(plays){
         rnd = Math.floor(Math.random()*total)
         total = 0
         for(var i=0;i<plays.length;i++){
-            total+=plays[i]/1
+            total+=plays[i]
             if(rnd<total){return(i)}
         }
     }
