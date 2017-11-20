@@ -1,4 +1,4 @@
-### MENACE: Machine Educable Noughts And Crosses Engine ###
+# MENACE: Machine Educable Noughts And Crosses Engine
 
 This is a JavaScript implementation of MENACE, a
 machine learning noughts and crosses bot which was
@@ -12,7 +12,7 @@ You can play against MENACE and read about how it
 works at http://mscroggs.co.uk/menace.
 
 
-##### Using MENACE #####
+## Using MENACE
 
 Open `index.html` to play against MENACE direct from
 this repo.
