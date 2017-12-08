@@ -184,6 +184,10 @@ function do_win(who_wins){
 
 function reset_menace(){
     wins_each=Array(0,0,0)
+    for (var i = 1; i <= 3; i++) {
+        document.getElementById("dis" + i).innerHTML = wins_each[i - 1]
+    }
+
     orderedBoxes = Array()
 
     // First moves
