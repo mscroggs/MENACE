@@ -21,7 +21,7 @@ incentives=Array(3,1,1)
 player='h'
 human_turn=false
 
-whoA = {"h":"Human","r":"Random","m":"MENACE2"}
+whoA = {"h":"Human","r":"Random","m":"MENACE2", "p":"Perfect"}
 
 
 function setPlayer(setTo){
@@ -31,8 +31,11 @@ function setPlayer(setTo){
     if(setTo=="r" && human_turn){
         play_random()
     }
-    if(setTo=="m" && human_turn){
+    else if(setTo=="m" && human_turn){
         play_menace2()
+    }
+    else if (setTo == "p" && human_turn) {
+        play_perfect()
     }
 }
 
@@ -145,22 +148,23 @@ function three(pos){
     return(0)
 }
 
-function winner(){
+function winner(board){
     pos=board.join("")
     th=three(pos)
     if(th!=0){return(th)}
-    if(num_empty()==0){return(3)} //draw
+    if(num_empty(board)==0){return(3)} //draw
     return(0)
 }
 
 function check_win(){
-    who_wins=winner()
+    who_wins=winner(board)
     if(who_wins!=0){
         if(who_wins==1){say("MENACE wins.")}
         if(who_wins==2){
             if(player=='h'){say("You win.")}
-            if(player=='m'){say("MENACE2 wins.")}
-            if(player=='r'){say("Random wins.")}
+            else if(player=='m'){say("MENACE2 wins.")}
+            else if(player=='r'){say("Random wins.")}
+            else if(player=='p'){say("Perfect wins.")}
         }
         if(who_wins==3){say("It's a draw.")}
         do_win(who_wins)
@@ -487,7 +491,7 @@ function new_game(){
 }
 
 function play_menace(){
-    if(num_empty()==1){
+    if(num_empty(board)==1){
         for(var i=0;i<9;i++){if(board[i]==0){inv_where=i}}
     } else {
         pos=board.join("")
@@ -509,6 +513,8 @@ function play_menace(){
             play_menace2()
         } else if(player=='h'){
             human_turn=true
+        } else if(player=='p'){
+            play_perfect()
         }
     }
 }
@@ -556,7 +562,19 @@ if(no_winner){
     }
 }}
 
-function num_empty(){
+function play_perfect(){
+if(no_winner){
+    human_turn=false
+    where = minimax(board, 2).index
+    board[where]=2
+    document.getElementById("pos"+where).innerHTML="&times;"
+    check_win()
+    if(no_winner){
+        window.setTimeout(play_menace,100)
+    }
+}}
+
+function num_empty(board){
     empty=0
     for(var i=0;i<9;i++){
         if(board[i]==0){empty+=1}
@@ -598,6 +616,52 @@ function make_move2(plays){
             if(rnd<total){return(i)}
         }
     }
+}
+
+function minimax(newboard, player) {
+    var who_wins = winner(newboard);
+    if (who_wins == 1) return { score: -10 };
+    else if (who_wins == 2) return { score: 10 };
+    else if (who_wins == 3) return { score: 0 };
+
+    var choices = Array();
+    for (var i = 0; i < 9; i++) {
+        if (newboard[i] == 0) { choices[choices.length] = i; }
+    }
+
+    var moves = Array();
+
+    for (var i = 0; i < choices.length; i++) {
+        var move = {};
+        move.index = choices[i];
+
+        newboard[choices[i]] = player;
+
+        result = minimax(newboard, player == 1 ? 2 : 1);
+        move.score = result.score;
+
+        newboard[choices[i]] = 0;
+
+        moves[moves.length] = move;
+    }
+
+    var bestMove = 0;
+    var bestScore = player == 1 ? 1000 : -1000;
+    for (var i = 0; i < moves.length; i++) {
+        if ((player == 2 && moves[i].score > bestScore) || (player == 1 && moves[i].score < bestScore)) {
+            bestScore = moves[i].score;
+            bestMove = i;
+        }
+    }
+
+    var bestMoves = Array();
+    for (var i = 0; i < moves.length; i++) {
+        if (moves[i].score == bestScore) {
+            bestMoves[bestMoves.length] = i;
+        }
+    }
+
+    return moves[bestMoves[Math.floor(Math.random() * bestMoves.length)]];
 }
 
 reset_menace()
