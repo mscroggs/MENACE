@@ -21,7 +21,7 @@ incentives=Array(3,1,1)
 player='h'
 human_turn=false
 plotdata = [0]
-
+removesymm = true
 whoA = {"h":"Human", "r":"Random", "m":"MENACE2", "p":"Perfect"}
 
 function setPlayer(setTo){
@@ -190,11 +190,13 @@ function updateplotlimits(){
 function add_box(pos,dummy_moves){
     rots=find_rotations(pos)
     if(three(pos)=="0" && rots[0]==0){
-        for(var i=1;i<rots.length;i++){
-            r=rotations[rots[i]]
-            for(var j=0;j<9;j++){
-                if(r[j]!=j){
-                    dummy_moves[Math.min(j,r[j])]=0
+        if(removesymm){
+            for(var i=1;i<rots.length;i++){
+                r=rotations[rots[i]]
+                for(var j=0;j<9;j++){
+                    if(r[j]!=j){
+                        dummy_moves[Math.min(j,r[j])]=0
+                    }
                 }
             }
         }
@@ -249,15 +251,9 @@ function say(stuff){
 
 
 function add_win(n){
-    if(n==1){//win
-        plotdata[plotdata.length] = plotdata[plotdata.length-1]+3
-    }
-    if(n==2){//draw
-        plotdata[plotdata.length] = plotdata[plotdata.length-1]+1
-    }
-    if(n==3){//lose
-        plotdata[plotdata.length] = plotdata[plotdata.length-1]-1
-    }
+    if(n==1){plotdata[plotdata.length] = plotdata[plotdata.length-1]+3} // win
+    if(n==2){plotdata[plotdata.length] = plotdata[plotdata.length-1]+1} // draw
+    if(n==3){plotdata[plotdata.length] = plotdata[plotdata.length-1]-1} // lose
     wins_each[n-1]+=1
     document.getElementById("dis"+n).innerHTML=wins_each[n-1]
     update_plot()
@@ -310,6 +306,11 @@ function do_win(who_wins){
 
 
 function reset_menace(){
+    if(!document.getElementById("includeall") || document.getElementById("includeall").checked){
+        removesymm = true
+    } else {
+        removesymm = false
+    }
     plotdata = [0]
     update_plot()
     wins_each=Array(0,0,0)
@@ -523,7 +524,10 @@ function show_menace(){
     output+="First Moves: <input size=1 id='im1' /> "
     output+="Third Moves: <input size=1 id='im3' /><br />"
     output+="Fifth Moves: <input size=1 id='im5' /> "
-    output+="Seventh Moves: <input size=1 id='im7'></small><br />"
+    output+="Seventh Moves: <input size=1 id='im7'><br />"
+    output+="<input type='checkbox' id='includeall'"
+    if(removesymm){output+=" checked"}
+    output+=">Remove beads for symmetrically equivalent moves</small><br />"
     output+="Incentives<br /><small>"
     output+="Win: Add <input size=1 id='ic_w' /> marbles<br/>"
     output+="Draw: Add <input size=1 id='ic_d' /> marbles<br/>"
@@ -551,7 +555,7 @@ function show_menace(){
     }
     if(cols!=0){output+=("</tr>")}
     output+=("</table><br /><br />")
-    output="These are the "+numb+" matchboxes which power MENACE.<br />"+output
+    output="These are the "+numb+" matchboxes that power MENACE.<br />"+output
     document.getElementById("moves").innerHTML=output
 }
 
