@@ -20,6 +20,7 @@ s=Array(8,4,2,1)
 incentives=Array(3,1,1)
 player='h'
 human_turn=false
+plotdata = [0]
 
 whoA = {"h":"Human", "r":"Random", "m":"MENACE2", "p":"Perfect"}
 
@@ -71,6 +72,119 @@ function apply_rotation(pos,rot){
         new_pos+=pos[rot[j]]
     }
     return(new_pos)
+}
+
+function update_plot(){
+    oldlimits = [xmin,xmax,ymin,ymax]
+    updateplotlimits()
+    if(xmin==oldlimits[0] && xmax==oldlimits[1] && ymin==oldlimits[2] && ymax==oldlimits[3]){
+        draw_point(plotdata.length-1)
+    } else {
+        redraw_plot()
+    }
+}
+
+function redraw_plot(){
+    // 440 by 300
+    var c=document.getElementById("plot_here");
+    var ctx=c.getContext("2d");
+
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    updateplotlimits()
+
+    for(var i=0;i<=5;i++){
+        y = ymin + (ymax-ymin)*i/5
+        ctx.textAlign = "right";
+        ctx.fillText(y, xtopx(0)-2, 4+ytopx(y));
+    }
+    ctx.fillText(0, xtopx(0)-2, 4+ytopx(0));
+
+    for(var i=1;i<=10;i++){
+        x = xmin + (xmax-xmin)*i/10
+        ctx.textAlign = "center";
+        ctx.fillText(x, xtopx(x), ytopx(0)+10);
+    }
+
+
+    ctx.beginPath();
+    ctx.moveTo(xtopx(0),ytopx(ymax));
+    ctx.lineTo(xtopx(0),ytopx(ymin));
+    ctx.moveTo(xtopx(xmin),ytopx(0));
+    ctx.lineTo(xtopx(xmax),ytopx(0));
+    ctx.stroke();
+
+    ctx.save()
+    ctx.translate(220, 150);
+    ctx.rotate(-Math.PI/2);
+    ctx.textAlign = "center";
+    ctx.fillText("Change in number of bead in first box", 0, -205);
+    ctx.fillText("(3\xD7wins + losses - draws)", 0, -194);
+    ctx.restore();
+
+    ctx.textAlign = "right";
+    ctx.fillText("Number of games", xtopx(xmax), ytopx(0)+20);
+
+
+    for(var i=0;i<plotdata.length;i++){
+        draw_point(i)
+    }
+
+
+    ctx.textAlign = "right";
+}
+
+function draw_point(i){
+    var c=document.getElementById("plot_here");
+    var ctx=c.getContext("2d");
+
+    ctx.beginPath();
+    ctx.arc(xtopx(i), ytopx(plotdata[i]), 3, 0, 2 * Math.PI, false);
+    ctx.fillStyle = '#FF0000';
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#000000';
+    ctx.stroke();
+    ctx.fillStyle = '#000000';
+}
+
+function ytopx(_y){
+    return 5+290*(_y-ymax)/(ymin-ymax)
+}
+function xtopx(_x){
+    return 40+390*(_x-xmin)/(xmax-xmin)
+}
+
+function arrmin(arr){
+    out = arr[0]
+    for(var i=1;i<arr.length;i++){
+        out = Math.min(out,arr[i])
+    }
+    return out
+}
+function arrmax(arr){
+    out = arr[0]
+    for(var i=1;i<arr.length;i++){
+        out = Math.max(out,arr[i])
+    }
+    return out
+}
+
+xmin = 0
+xmax = 0
+ymin = 0
+ymax = 0
+
+function updateplotlimits(){
+    ymin = arrmin(plotdata)
+    ymin -= 10 + ymin % 10
+    ymin = Math.min(-10,ymin)
+    ymax = arrmax(plotdata) + 10
+    ymax -= ymax % 10
+
+    xmin = 0
+    xmax = plotdata.length + 20
+    xmax -= xmax % 20
 }
 
 function add_box(pos,dummy_moves){
@@ -135,8 +249,18 @@ function say(stuff){
 
 
 function add_win(n){
+    if(n==1){//win
+        plotdata[plotdata.length] = plotdata[plotdata.length-1]+3
+    }
+    if(n==2){//draw
+        plotdata[plotdata.length] = plotdata[plotdata.length-1]+1
+    }
+    if(n==3){//lose
+        plotdata[plotdata.length] = plotdata[plotdata.length-1]-1
+    }
     wins_each[n-1]+=1
     document.getElementById("dis"+n).innerHTML=wins_each[n-1]
+    update_plot()
 }
 function three(pos){
     for(var i=0;i<pwns.length;i++){
@@ -186,6 +310,8 @@ function do_win(who_wins){
 
 
 function reset_menace(){
+    plotdata = [0]
+    update_plot()
     wins_each=Array(0,0,0)
     for (var i = 1; i <= 3; i++) {
         document.getElementById("dis" + i).innerHTML = wins_each[i - 1]
@@ -498,6 +624,7 @@ function play_menace(){
         pos=apply_rotation(pos,rotations[which_rot])
         plays=boxes[pos]
         where=make_move(plays)
+        if(where=="resign"){return}
         document.getElementById(pos+"-"+where).style.color="#FF0000"
         inv_where=rotations[which_rot][where]
         moves.push(Array(pos,where))
@@ -589,6 +716,7 @@ function make_move(plays){
     if(total==0){
         say("MENACE resigns.")
         do_win(2)
+        return "resign"
     } else {
         rnd = Math.floor(Math.random()*total)
         total = 0

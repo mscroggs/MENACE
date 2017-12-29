@@ -15,7 +15,8 @@ table.board td.p1,table.board td.p7 {border-left:1px solid grey;border-right:1px
 table.board td.p3,table.board td.p5 {border-top:1px solid grey;border-bottom:1px solid grey}
 table.board td.p4 {border:1px solid grey;}
 .wins {border:2px solid grey;position:absolute;width:120px;height:60px;top:200px;text-align:center}
-.summary {border:2px solid grey;position:absolute;width:440px;height:200px;top:300px;left:35px;text-align:center}
+.summary {border:2px solid grey;position:absolute;width:440px;height:100px;top:300px;left:35px;text-align:center;overflow:hidden}
+.graph {position:absolute;top:440px;left:35px;}
 .wins#n1 {left:35px}
 .wins#n2 {left:195px}
 .wins#n3 {left:355px}
@@ -51,7 +52,7 @@ table.board td form {margin:0px}
 <div class='wins' id='n2'><small>Draws</small><br /><span class='dis' id='dis2'>0</span></div>
 <div class='wins' id='n3'><small><span id='who'>Human</span> Wins</small><br /><span class='dis' id='dis3'>0</span></div>
 <div class='summary' id='list_here'></div>
-
+<canvas class='graph' id='plot_here' width='440' height='300'></canvas>
 <script type='text/javascript' src='menace.js'></script>
 
 </body>
