@@ -6,7 +6,7 @@
 /*             Engine              */
 /***********************************/
 /* Based on the first MENACE built */
-/* by Donal Michie in 1960 using   */
+/* by Donald Michie in 1960 using  */
 /* matchboxes.                     */
 /***********************************/
 /*     This implementation was     */
@@ -21,8 +21,7 @@ incentives=Array(3,1,1)
 player='h'
 human_turn=false
 
-whoA = {"h":"Human","r":"Random","m":"MENACE2", "p":"Perfect"}
-
+whoA = {"h":"Human", "r":"Random", "m":"MENACE2", "p":"Perfect"}
 
 function setPlayer(setTo){
     player=setTo
