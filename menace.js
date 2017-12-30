@@ -15,33 +15,40 @@
 /*    http://www.mscroggs.co.uk    */
 /***********************************/
 
-orderedBoxes = Array()
-s=Array(8,4,2,1)
-incentives=Array(3,1,1)
-player='h'
-human_turn=false
-plotdata = [0]
-removesymm = true
-whoA = {"h":"Human", "r":"Random", "m":"MENACE2", "p":"Perfect"}
-
-function setPlayer(setTo){
-    player=setTo
-    moves2 = Array()
-    document.getElementById("who").innerHTML = whoA[setTo]
-    if(setTo=="r" && human_turn){
-        play_random()
-    }
-    else if(setTo=="m" && human_turn){
-        play_menace2()
-    }
-    else if (setTo == "p" && human_turn) {
-        play_perfect()
-    }
+// MENACE1
+menace = {
+    "boxes":Array(),
+    "orderedBoxes":Array(),
+    "start":Array(8,4,2,1),
+    "removesymm":true,
+    "incentives":Array(3,1,1),
+    "player":1
 }
 
-boxes = Array()
-boxes2 = Array()
+// MENACE2
+menace2 = {
+    "boxes":Array(),
+    "orderedBoxes":Array(),
+    "start":Array(8,4,2,1),
+    "removesymm":true,
+    "incentives":Array(3,1,1),
+    "player":2
+}
 
+// what is player 2?
+player='h'
+whoA = {"h":"Human", "r":"Random", "m":"MENACE2", "p":"Perfect"}
+
+// plotting
+plotdata = [0]
+xmin = 0
+xmax = 0
+ymin = 0
+ymax = 0
+
+// game data
+said=Array("","","","","","","","","","")
+human_turn=false
 pwns = Array(
     Array(0,1,2),
     Array(3,4,5),
@@ -64,7 +71,22 @@ rotations=Array(
     Array(2,1,0,5,4,3,8,7,6)
 )
 
-said=Array("","","","","","","","","","")
+
+
+function setPlayer(setTo){
+    player=setTo
+    moves2 = Array()
+    document.getElementById("who").innerHTML = whoA[setTo]
+    if(setTo=="r" && human_turn){
+        play_random()
+    }
+    else if(setTo=="m" && human_turn){
+        play_menace2()
+    }
+    else if (setTo == "p" && human_turn) {
+        play_perfect()
+    }
+}
 
 function apply_rotation(pos,rot){
     new_pos=""
@@ -106,7 +128,6 @@ function redraw_plot(){
         ctx.fillText(x, xtopx(x), ytopx(0)+10);
     }
 
-
     ctx.beginPath();
     ctx.moveTo(xtopx(0),ytopx(ymax));
     ctx.lineTo(xtopx(0),ytopx(ymin));
@@ -129,9 +150,6 @@ function redraw_plot(){
     for(var i=0;i<plotdata.length;i++){
         draw_point(i)
     }
-
-
-    ctx.textAlign = "right";
 }
 
 function draw_point(i){
@@ -151,6 +169,7 @@ function draw_point(i){
 function ytopx(_y){
     return 5+290*(_y-ymax)/(ymin-ymax)
 }
+
 function xtopx(_x){
     return 40+390*(_x-xmin)/(xmax-xmin)
 }
@@ -162,6 +181,7 @@ function arrmin(arr){
     }
     return out
 }
+
 function arrmax(arr){
     out = arr[0]
     for(var i=1;i<arr.length;i++){
@@ -169,11 +189,6 @@ function arrmax(arr){
     }
     return out
 }
-
-xmin = 0
-xmax = 0
-ymin = 0
-ymax = 0
 
 function updateplotlimits(){
     ymin = arrmin(plotdata)
@@ -190,7 +205,7 @@ function updateplotlimits(){
 function add_box(pos,dummy_moves){
     rots=find_rotations(pos)
     if(three(pos)=="0" && rots[0]==0){
-        if(removesymm){
+        if(menace["removesymm"]){
             for(var i=1;i<rots.length;i++){
                 r=rotations[rots[i]]
                 for(var j=0;j<9;j++){
@@ -200,8 +215,8 @@ function add_box(pos,dummy_moves){
                 }
             }
         }
-        orderedBoxes[orderedBoxes.length] = pos
-        boxes[pos]=dummy_moves
+        menace["orderedBoxes"][menace["orderedBoxes"].length] = pos
+        menace["boxes"][pos]=dummy_moves
     }
 }
 
@@ -216,7 +231,7 @@ function add_box2(pos,dummy_moves){
                 }
             }
         }
-        boxes2[pos]=dummy_moves
+        menace2["boxes"][pos]=dummy_moves
     }
 }
 
@@ -224,6 +239,7 @@ function find_rotation(pos){
     max_rot=find_rotations(pos)
     return(max_rot[Math.floor(Math.random()*max_rot.length)])
 }
+
 function find_rotations(pos){
     max=-1
     max_rot=Array()
@@ -258,6 +274,7 @@ function add_win(n){
     document.getElementById("dis"+n).innerHTML=wins_each[n-1]
     update_plot()
 }
+
 function three(pos){
     for(var i=0;i<pwns.length;i++){
         if(pos[pwns[i][0]]!="0" && pos[pwns[i][0]]==pos[pwns[i][1]] && pos[pwns[i][1]]==pos[pwns[i][2]]){
@@ -304,12 +321,19 @@ function do_win(who_wins){
     window.setTimeout(new_game,1000)
 }
 
+function array_fill(start,length,value){
+    out = Array()
+    for(var i=start;i<length;i++){
+        out[i]=value
+    }
+    return out
+}
 
 function reset_menace(){
     if(!document.getElementById("includeall") || document.getElementById("includeall").checked){
-        removesymm = true
+        menace["removesymm"] = true
     } else {
-        removesymm = false
+        menace["removesymm"] = false
     }
     plotdata = [0]
     update_plot()
@@ -318,10 +342,10 @@ function reset_menace(){
         document.getElementById("dis" + i).innerHTML = wins_each[i - 1]
     }
 
-    orderedBoxes = Array()
+    menace["orderedBoxes"] = Array()
 
     // First moves
-    add_box("000000000",Array(s[0],s[0],s[0],s[0],s[0],s[0],s[0],s[0],s[0]))
+    add_box("000000000",array_fill(0,9,menace["start"][0]))
 
     // Third moves
     for(var i=0;i<9;i++){for(var j=0;j<9;j++){if(i!=j){
@@ -336,7 +360,7 @@ function reset_menace(){
                     dummy_moves.push(0)
                 } else {
                     pos+="0"
-                    dummy_moves.push(s[1])
+                    dummy_moves.push(menace["start"][1])
                 }
             }
             add_box(pos,dummy_moves)
@@ -356,12 +380,12 @@ function reset_menace(){
                     dummy_moves.push(0)
                 } else {
                     pos+="0"
-                    dummy_moves.push(s[2])
+                    dummy_moves.push(menace["start"][2])
                 }
             }
             add_box(pos,dummy_moves)
     }} }}}}
-    
+
     // Seventh moves
     for(var i=0;i<9;i++){for(var k=0;k<i;k++){for(var m=0;m<k;m++){
     for(var j=0;j<9;j++){if(i!=j && k!=j && m!=j){for(var l=0;l<j;l++){if(i!=l && k!=l && m!=l){for(var n=0;n<l;n++){if(i!=n && k!=n && m!=n){
@@ -376,7 +400,7 @@ function reset_menace(){
                     dummy_moves.push(0)
                 } else {
                     pos+="0"
-                    dummy_moves.push(s[3])
+                    dummy_moves.push(menace["start"][3])
                 }
             }
             add_box(pos,dummy_moves)
@@ -396,7 +420,7 @@ function reset_menace2(){
                     dummy_moves.push(0)
                 } else {
                     pos+="0"
-                    dummy_moves.push(s[0])
+                    dummy_moves.push(menace2["start"][0])
                 }
             }
             add_box2(pos,dummy_moves)
@@ -416,7 +440,7 @@ function reset_menace2(){
                     dummy_moves.push(0)
                 } else {
                     pos+="0"
-                    dummy_moves.push(s[1])
+                    dummy_moves.push(menace2["start"][1])
                 }
             }
             add_box2(pos,dummy_moves)
@@ -436,12 +460,12 @@ function reset_menace2(){
                     dummy_moves.push(0)
                 } else {
                     pos+="0"
-                    dummy_moves.push(s[2])
+                    dummy_moves.push(menace2["start"][2])
                 }
             }
             add_box2(pos,dummy_moves)
     }}} }}}}
-    
+
     // Eighth moves
     for(var i=0;i<9;i++){for(var k=0;k<i;k++){for(var m=0;m<k;m++){for(var o=0;o<m;o++){
     for(var j=0;j<9;j++){if(i!=j && k!=j && m!=j){for(var l=0;l<j;l++){if(i!=l && k!=l && m!=l){for(var n=0;n<l;n++){if(i!=n && k!=n && m!=n){
@@ -456,7 +480,7 @@ function reset_menace2(){
                     dummy_moves.push(0)
                 } else {
                     pos+="0"
-                    dummy_moves.push(s[3])
+                    dummy_moves.push(menace2["start"][3])
                 }
             }
             add_box2(pos,dummy_moves)
@@ -472,7 +496,7 @@ function make_ox(pos){
         if(i%3==0){output+="<tr>"}
         output += "<td id='"+pos+"-"+i+"' class='p"+i
         if(str[i]==" "){
-            output += " num'>"+boxes[pos][i]+"</td>"
+            output += " num'>"+menace["boxes"][pos][i]+"</td>"
         } else {
             output += "'>"
             if(str[i]=="O"){output+="&#9711;"}
@@ -486,13 +510,13 @@ function make_ox(pos){
 }
 
 function show_set(){
-    document.getElementById("im1").value=parseInt(s[0])
-    document.getElementById("im3").value=parseInt(s[1])
-    document.getElementById("im5").value=parseInt(s[2])
-    document.getElementById("im7").value=parseInt(s[3])
-    document.getElementById("ic_w").value=parseInt(incentives[0])
-    document.getElementById("ic_d").value=parseInt(incentives[1])
-    document.getElementById("ic_l").value=parseInt(incentives[2])
+    document.getElementById("im1").value=parseInt(menace["start"][0])
+    document.getElementById("im3").value=parseInt(menace["start"][1])
+    document.getElementById("im5").value=parseInt(menace["start"][2])
+    document.getElementById("im7").value=parseInt(menace["start"][3])
+    document.getElementById("ic_w").value=parseInt(menace["incentives"][0])
+    document.getElementById("ic_d").value=parseInt(menace["incentives"][1])
+    document.getElementById("ic_l").value=parseInt(menace["incentives"][2])
     document.getElementById("tweak_h").style.display="block"
     document.getElementById("tweak_s").style.display="none"
 }
@@ -506,13 +530,13 @@ function update_set_r(){
     reset_menace2()
 }
 function update_set(){
-    s[0]=parseInt(document.getElementById("im1").value)
-    s[1]=parseInt(document.getElementById("im3").value)
-    s[2]=parseInt(document.getElementById("im5").value)
-    s[3]=parseInt(document.getElementById("im7").value)
-    incentives[0]=parseInt(document.getElementById("ic_w").value)
-    incentives[1]=parseInt(document.getElementById("ic_d").value)
-    incentives[2]=parseInt(document.getElementById("ic_l").value)
+    menace["start"][0]=parseInt(document.getElementById("im1").value)
+    menace["start"][1]=parseInt(document.getElementById("im3").value)
+    menace["start"][2]=parseInt(document.getElementById("im5").value)
+    menace["start"][3]=parseInt(document.getElementById("im7").value)
+    menace["incentives"][0]=parseInt(document.getElementById("ic_w").value)
+    menace["incentives"][1]=parseInt(document.getElementById("ic_d").value)
+    menace["incentives"][2]=parseInt(document.getElementById("ic_l").value)
     hide_set()
 }
 
@@ -526,7 +550,7 @@ function show_menace(){
     output+="Fifth Moves: <input size=1 id='im5' /> "
     output+="Seventh Moves: <input size=1 id='im7'><br />"
     output+="<input type='checkbox' id='includeall'"
-    if(removesymm){output+=" checked"}
+    if(menace["removesymm"]){output+=" checked"}
     output+=">Remove beads for symmetrically equivalent moves</small><br />"
     output+="Incentives<br /><small>"
     output+="Win: Add <input size=1 id='ic_w' /> marbles<br/>"
@@ -545,8 +569,8 @@ function show_menace(){
     output+="<table>"
     cols=0
     numb=0
-    for(var k=0;k<orderedBoxes.length;k++){
-        key = orderedBoxes[k]
+    for(var k=0;k<menace["orderedBoxes"].length;k++){
+        key = menace["orderedBoxes"][k]
         if(cols==0){output+=("<tr>")}
         cols+=1
         numb+=1
@@ -565,21 +589,21 @@ function update_box(key){
 
 
 function box_add(pos,move,change){
-    boxes[pos][move]=Math.max(0,parseInt(change)+parseInt(boxes[pos][move]))
+    menace["boxes"][pos][move]=Math.max(0,parseInt(change)+parseInt(menace["boxes"][pos][move]))
     update_box(pos)
 }
 
 function box_add2(pos,move,change){
-    boxes2[pos][move]=Math.max(0,parseInt(change)+parseInt(boxes2[pos][move]))
+    menace2["boxes"][pos][move]=Math.max(0,parseInt(change)+parseInt(menace2["boxes"][pos][move]))
 }
 
 function menace_win(){
     for(var i=0;i<moves.length;i++){
-        box_add(moves[i][0],moves[i][1],incentives[0])
+        box_add(moves[i][0],moves[i][1],menace["incentives"][0])
     }
     if(player=="m"){
     for(var i=0;i<moves2.length;i++){
-        box_add2(moves2[i][0],moves2[i][1],-incentives[2])
+        box_add2(moves2[i][0],moves2[i][1],-menace["incentives"][2])
     }
     }
 
@@ -587,22 +611,22 @@ function menace_win(){
 }
 function menace_draw(){
     for(var i=0;i<moves.length-1;i++){
-        box_add(moves[i][0],moves[i][1],incentives[1])
+        box_add(moves[i][0],moves[i][1],menace["incentives"][1])
     }
     if(player=="m"){
     for(var i=0;i<moves2.length;i++){
-        box_add2(moves2[i][0],moves2[i][1],incentives[1])
+        box_add2(moves2[i][0],moves2[i][1],menace["incentives"][1])
     }
     }
     add_win(2)
 }
 function menace_lose(){
     for(var i=0;i<moves.length;i++){
-        box_add(moves[i][0],moves[i][1],-incentives[2])
+        box_add(moves[i][0],moves[i][1],-menace["incentives"][2])
     }
     if(player=="m"){
     for(var i=0;i<moves2.length;i++){
-        box_add2(moves2[i][0],moves2[i][1],incentives[0])
+        box_add2(moves2[i][0],moves2[i][1],menace["incentives"][0])
     }
     }
     add_win(3)
@@ -626,7 +650,7 @@ function play_menace(){
         pos=board.join("")
         which_rot=find_rotation(pos)
         pos=apply_rotation(pos,rotations[which_rot])
-        plays=boxes[pos]
+        plays=menace["boxes"][pos]
         where=make_move(plays)
         if(where=="resign"){return}
         document.getElementById(pos+"-"+where).style.color="#FF0000"
@@ -653,7 +677,7 @@ function play_menace2(){
     pos=board.join("")
     which_rot=find_rotation(pos)
     pos=apply_rotation(pos,rotations[which_rot])
-    plays=boxes2[pos]
+    plays=menace2["boxes"][pos]
     where=make_move2(plays)
     inv_where=rotations[which_rot][where]
     moves2.push(Array(pos,where))
