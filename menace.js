@@ -1,19 +1,16 @@
-/***********************************/
-/*            MENACE               */
-/*                                 */
-/*        Machine Educable         */
-/*      Noughts And Crosses        */
-/*             Engine              */
-/***********************************/
-/* Based on the first MENACE built */
-/* by Donald Michie in 1960 using  */
-/* matchboxes.                     */
-/***********************************/
-/*     This implementation was     */
-/*           written by            */
-/*         Matthew Scroggs         */
-/*    http://www.mscroggs.co.uk    */
-/***********************************/
+/************************************/
+/*             MENACE               */
+/*     Machine Educable Noughts     */
+/*       and Crosses Engine         */
+/************************************/
+/* Based on the first MENACE built  */
+/* by Donald Michie in 1960 using   */
+/* 304 matchboxes.                  */
+/************************************/
+/* This implementation was written  */
+/*               by Matthew Scroggs */
+/* http://www.mscroggs.co.uk/menace */
+/************************************/
 
 // MENACEs
 var menace = {
