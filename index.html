@@ -24,7 +24,10 @@ table.board td.p4 {border:1px solid grey;}
 table.board td form {margin:0px}
 .players {position:absolute;left:280px;top:30px}
 </style>
-<span id='moves' style='position:absolute;right:5px'></span>
+<span style='position:absolute;right:5px'>
+<span id='_1_moves'></span>
+<span id='_2_moves'></span>
+</span>
 <table class='board large'>
 <tr>
     <td id='pos0' class='p0'></td>
@@ -49,8 +52,8 @@ table.board td form {margin:0px}
 <option value='p'>Perfect</option>
 </select></div>
 <div class='wins' id='n1'><small>MENACE Wins</small><br /><span class='dis' id='dis1'>0</span></div>
-<div class='wins' id='n2'><small>Draws</small><br /><span class='dis' id='dis2'>0</span></div>
-<div class='wins' id='n3'><small><span id='who'>Human</span> Wins</small><br /><span class='dis' id='dis3'>0</span></div>
+<div class='wins' id='n2'><small>Draws</small><br /><span class='dis' id='dis0'>0</span></div>
+<div class='wins' id='n3'><small><span id='who'>Human</span> Wins</small><br /><span class='dis' id='dis2'>0</span></div>
 <div class='summary' id='list_here'></div>
 <canvas class='graph' id='plot_here' width='440' height='300'></canvas>
 <script type='text/javascript' src='menace.js'></script>

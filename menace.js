@@ -15,91 +15,631 @@
 /*    http://www.mscroggs.co.uk    */
 /***********************************/
 
-// MENACE1
-menace = {
-    "boxes":Array(),
-    "orderedBoxes":Array(),
-    "start":Array(8,4,2,1),
+// MENACEs
+var menace = {
+ 1:{
+    "boxes":{},
+    "orderedBoxes":[],
+    "start":[8,4,2,1],
     "removesymm":true,
-    "incentives":Array(3,1,1),
-    "player":1
-}
-
-// MENACE2
-menace2 = {
-    "boxes":Array(),
-    "orderedBoxes":Array(),
-    "start":Array(8,4,2,1),
+    "incentives":[1,3,-1],
+    "moves":[],
+    "player":1},
+ 2:{
+    "boxes":{},
+    "orderedBoxes":[],
+    "start":[8,4,2,1],
     "removesymm":true,
-    "incentives":Array(3,1,1),
-    "player":2
+    "incentives":[1,3,-1],
+    "moves":[],
+    "player":2}
 }
 
 // what is player 2?
-player='h'
-whoA = {"h":"Human", "r":"Random", "m":"MENACE2", "p":"Perfect"}
+var player = 'h'
+var whoA = {"h":"Human", "r":"Random", "m":"MENACE2", "p":"Perfect"}
 
 // plotting
-plotdata = [0]
-xmin = 0
-xmax = 0
-ymin = 0
-ymax = 0
+var plotdata = [0]
+var xmin = 0
+var xmax = 0
+var ymin = 0
+var ymax = 0
 
 // game data
-said=Array("","","","","","","","","","")
-human_turn=false
-pwns = Array(
-    Array(0,1,2),
-    Array(3,4,5),
-    Array(6,7,8),
-    Array(0,3,6),
-    Array(1,4,7),
-    Array(2,5,8),
-    Array(0,4,8),
-    Array(6,4,2)
-)
+var wins_each = [0,0,0]
+var board = [0,0,0,0,0,0,0,0,0]
+var no_winner = true
+var pieces = ["","&#9711;","&times;"]
+var said = ["","","","","","","","","",""]
+var human_turn=false
+var pwns = [
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+    [0,4,8],
+    [6,4,2]
+]
 
-rotations=Array(
-    Array(0,1,2,3,4,5,6,7,8),
-    Array(0,3,6,1,4,7,2,5,8),
-    Array(6,3,0,7,4,1,8,5,2),
-    Array(6,7,8,3,4,5,0,1,2),
-    Array(8,7,6,5,4,3,2,1,0),
-    Array(8,5,2,7,4,1,6,3,0),
-    Array(2,5,8,1,4,7,0,3,6),
-    Array(2,1,0,5,4,3,8,7,6)
-)
+var rotations=[
+    [0,1,2,3,4,5,6,7,8],
+    [0,3,6,1,4,7,2,5,8],
+    [6,3,0,7,4,1,8,5,2],
+    [6,7,8,3,4,5,0,1,2],
+    [8,7,6,5,4,3,2,1,0],
+    [8,5,2,7,4,1,6,3,0],
+    [2,5,8,1,4,7,0,3,6],
+    [2,1,0,5,4,3,8,7,6]
+]
 
+// array utility functions
+function arrmin(arr){
+    var out = arr[0]
+    for(var i=1;i<arr.length;i++){
+        out = Math.min(out,arr[i])
+    }
+    return out
+}
 
+function arrmax(arr){
+    var out = arr[0]
+    for(var i=1;i<arr.length;i++){
+        out = Math.max(out,arr[i])
+    }
+    return out
+}
+
+function array_fill(start,length,value){
+    var out = []
+    for(var i=start;i<length;i++){
+        out[i]=value
+    }
+    return out
+}
+
+function count(arr, value){
+    var out = 0
+    for(var i=0;i<arr.length;i++){
+        if(arr[i] == value){out++}
+    }
+    return out
+}
+
+// game functions
+function new_game(){
+    menace[1]["moves"] = []
+    menace[2]["moves"] = []
+    board = [0,0,0,0,0,0,0,0,0]
+    no_winner = true
+    for(var i=0;i<9;i++){
+        document.getElementById("pos"+i).innerHTML = "<form onsubmit='javascript:play_human("+i+");return false'><input type='submit' value=' '></form>"
+    }
+    play_menace()
+}
 
 function setPlayer(setTo){
-    player=setTo
-    moves2 = Array()
+    player = setTo
     document.getElementById("who").innerHTML = whoA[setTo]
-    if(setTo=="r" && human_turn){
-        play_random()
+    if(setTo=="m"){
+        show_menace(2)
+    } else {
+        hide_menace(2)
     }
-    else if(setTo=="m" && human_turn){
-        play_menace2()
-    }
-    else if (setTo == "p" && human_turn) {
-        play_perfect()
+    if(setTo!="h" && human_turn){
+        play_opponent()
     }
 }
 
+function winner(b){
+    var pos = b.join("")
+    var th = three(pos)
+    if(th != 0){
+        return th
+    }
+    if(count(b,0) == 0){
+        return 0
+    }
+    return false
+}
+
+function opposite_result(r){
+    if(r==0){
+        return 0
+    }
+    return 3-r
+}
+
+function check_win(){
+    var who_wins = winner(board)
+    if(who_wins !== false){
+        if(who_wins == 0){
+            say("It's a draw.")
+        }
+        if(who_wins == 1){
+            say("MENACE wins.")
+        }
+        if(who_wins == 2){
+            say(whoA[player]+" wins.")
+        }
+        do_win(who_wins)
+        human_turn = false
+    }
+}
+
+function do_win(who_wins){
+    no_winner = false
+    for(var i=0;i<9;i++){
+        if(board[i] == 0){
+            document.getElementById("pos"+i).innerHTML = ""
+        }
+    }
+    menace_add_beads(who_wins)
+    window.setTimeout(new_game,1000)
+}
+
+function play_menace(){
+    where = get_menace_move(1)
+    if(where=="resign"){
+        do_win(2)
+        say("MENACE resigns")
+        return
+    }
+    board[where] = 1
+    document.getElementById("pos"+where).innerHTML = pieces[1]
+    check_win()
+    if(no_winner){
+        play_opponent()
+    }
+}
+
+function play_opponent(){
+    if(player == 'h'){
+        human_turn = true
+        return
+    }
+    human_turn = false
+    var where = undefined
+    if(player == 'r'){
+        where = get_random_move()
+    } else if(player == 'm'){
+        where = get_menace_move(2)
+    } else if(player == 'p'){
+        where = get_perfect_move()
+    }
+    if(where=="resign"){
+        do_win(1)
+        say("MENACE2 resigns")
+        return
+    }
+    board[where] = 2
+    document.getElementById("pos"+where).innerHTML = pieces[2]
+    check_win()
+    if(no_winner){
+        window.setTimeout(play_menace,100)
+    }
+}
+
+// board functions
 function apply_rotation(pos,rot){
-    new_pos=""
+    var new_pos = ""
     for(var j=0;j<9;j++){
-        new_pos+=pos[rot[j]]
+        new_pos += pos[rot[j]]
     }
-    return(new_pos)
+    return new_pos
 }
 
+function find_all_rotations(pos){
+    var max = -1
+    var max_rot = []
+    for(var i=0;i<rotations.length;i++){
+        var try_pos = apply_rotation(pos,rotations[i])
+        if(try_pos > max){
+            max = try_pos
+            max_rot = []
+        }
+        if(try_pos == max){
+            max_rot.push(i)
+        }
+    }
+    return max_rot
+}
+
+function find_rotation(pos){
+    var max_rot = find_all_rotations(pos)
+    return max_rot[Math.floor(Math.random()*max_rot.length)]
+}
+
+function three(pos){
+    for(var i=0;i<pwns.length;i++){
+        if(pos[pwns[i][0]] != "0" && pos[pwns[i][0]] == pos[pwns[i][1]] && pos[pwns[i][1]] == pos[pwns[i][2]]){
+            return parseInt(pos[pwns[i][0]])
+        }
+    }
+    return 0
+}
+
+function rotation_is_max(pos){
+    var rots = find_all_rotations(pos)
+    return rots[0] == 0
+}
+
+// MENACE functions
+function add_box(pos,n,s){
+    menace[n]["orderedBoxes"][s].push(pos)
+    menace[n]["boxes"][pos] = new_box(pos,n,menace[n]["start"][s])
+}
+
+function new_box(pos,n,start){
+    var rots = find_all_rotations(pos)
+    var box = array_fill(0,9,start)
+    for(var i=0;i<9;i++){
+        if(pos[i] != "0"){
+            box[i] = 0
+        }
+    }
+    if(menace[n]["removesymm"]){
+        for(var i=1;i<rots.length;i++){
+            var r = rotations[rots[i]]
+            for(var j=0;j<9;j++){
+                if(r[j]!=j){
+                    box[Math.min(j,r[j])] = 0
+                }
+            }
+        }
+    }
+    return box
+}
+
+function search_moves(b, n){
+    var played = 10 - count(b,0)
+    var move = 2 - played%2
+    var other = 3 - move
+    var minmove = 9
+    for(var i=8;i>=0;i--){
+        if(b[i] == move){
+            minmove = i
+        }
+    }
+    for(var i=0;i<minmove;i++){
+        if(b[i]==0){
+            var newboard = b.slice()
+            newboard[i] = move
+            if(n == other || n == "both"){
+                if(winner(newboard) === false && rotation_is_max(newboard)){
+                    add_box(newboard.join(""),other,Math.floor(played/2))
+                }
+            }
+                if(played < 7){
+                    search_moves(newboard,n)
+                }
+        }
+    }
+}
+
+function order_boxes(n){
+    menace[n]["orderedBoxes"] = menace[n]["orderedBoxes"][0].concat(menace[n]["orderedBoxes"][1],menace[n]["orderedBoxes"][2],menace[n]["orderedBoxes"][3])
+}
+
+function reset_menace(n){
+    for(var i=1;i<=2;i++){
+        if(n==i || n=="both"){
+            menace[i]["orderedBoxes"] = [[],[],[],[]]
+            menace[i]["boxes"] = []
+        }
+    }
+    if(n == 1 || n == "both"){
+        plotdata = [0]
+        update_plot()
+        wins_each = [0,0,0]
+        for (var i=0;i<3;i++) {
+            document.getElementById("dis"+i).innerHTML = wins_each[i]
+        }
+
+        add_box("000000000",1,0)
+    }
+
+    search_moves(array_fill(0,9,0),n)
+
+    for(var i=1;i<=2;i++){
+        if(n == i || n == "both"){
+            order_boxes(i)
+        }
+    }
+    show_menace(1)
+    if(player=="m"){
+        show_menace(2)
+    }
+    new_game()
+}
+
+function update_set_r(n){
+    update_set(n)
+    reset_menace(n)
+}
+
+function update_set(n){
+    menace[n]["removesymm"] = (!document.getElementById("_"+n+"_includeall") || document.getElementById("_"+n+"_includeall").checked)
+    if(n==1){
+        menace[1]["start"][0] = parseInt(document.getElementById("im1").value)
+        menace[1]["start"][1] = parseInt(document.getElementById("im3").value)
+        menace[1]["start"][2] = parseInt(document.getElementById("im5").value)
+        menace[1]["start"][3] = parseInt(document.getElementById("im7").value)
+    }
+    if(n==2){
+        menace[2]["start"][0] = parseInt(document.getElementById("im2").value)
+        menace[2]["start"][1] = parseInt(document.getElementById("im4").value)
+        menace[2]["start"][2] = parseInt(document.getElementById("im5").value)
+        menace[2]["start"][3] = parseInt(document.getElementById("im8").value)
+    }
+    menace[n]["incentives"][1] = parseInt(document.getElementById("_"+n+"_ic_w").value)
+    menace[n]["incentives"][0] = parseInt(document.getElementById("_"+n+"_ic_d").value)
+    menace[n]["incentives"][2] = -parseInt(document.getElementById("_"+n+"_ic_l").value)
+    hide_set(n)
+}
+
+function box_add(pos,move,change,n){
+    menace[n]["boxes"][pos][move] = Math.max(0,change+menace[n]["boxes"][pos][move])
+    update_box(pos,n)
+}
+
+function menace_add_beads(result){
+    for(var i=0;i<menace[1]["moves"].length;i++){
+        box_add(menace[1]["moves"][i][0],menace[1]["moves"][i][1],menace[1]["incentives"][result],1)
+    }
+    if(player=="m"){
+        for(var i=0;i<menace[2]["moves"].length;i++){
+            box_add(menace[2]["moves"][i][0],menace[2]["moves"][i][1],menace[2]["incentives"][opposite_result(result)],2)
+        }
+    }
+    update_totals(result)
+}
+
+function get_menace_move(n){
+    var inv_where = 0
+    if(count(board,0) == 1){
+        for(var i=0;i<9;i++){
+            if(board[i] == 0){
+                inv_where = i
+            }
+        }
+    } else {
+        var pos = board.join("")
+        var which_rot = find_rotation(pos)
+        var pos = apply_rotation(pos,rotations[which_rot])
+        var plays = menace[n]["boxes"][pos]
+        var where = make_move(plays)
+        if(where == "resign"){return "resign"}
+        document.getElementById(pos+"-"+where).style.color = "#FF0000"
+        var inv_where = rotations[which_rot][where]
+        menace[n]["moves"].push([pos,where])
+    }
+    return inv_where
+}
+
+// UI functions
+function update_totals(n){
+    plotdata.push(plotdata[plotdata.length-1]+menace[1]["incentives"][n])
+    wins_each[n] += 1
+    document.getElementById("dis"+n).innerHTML = wins_each[n]
+    update_plot()
+}
+
+function update_box(key,n){
+    document.getElementById("board"+key).innerHTML = make_ox(key,n)
+}
+
+function say(stuff){
+    var new_said = [stuff]
+    for(var i=0;i<9;i++){
+        new_said.push(said[i])
+    }
+    said = new_said
+    document.getElementById("list_here").innerHTML = said.join("<br />")
+}
+
+function make_ox(pos,n){
+    var output = "<center><table class='board'>"
+    for(var i=0;i<9;i++){
+        if(i%3 == 0){output+="<tr>"}
+        output += "<td id='"+pos+"-"+i+"' class='p"+i
+        if(pos[i] == 0){
+            output += " num'>"+menace[n]["boxes"][pos][i]+"</td>"
+        } else {
+            output += "'>"
+            output += pieces[pos[i]]
+            output += "</td>"
+        }
+        if(i%3 == 2){output+="</tr>"}
+    }
+    output += "</table></center>"
+    return output
+}
+
+function show_set(n){
+    if(n==1){
+        document.getElementById("im1").value = menace[1]["start"][0]
+        document.getElementById("im3").value = menace[1]["start"][1]
+        document.getElementById("im5").value = menace[1]["start"][2]
+        document.getElementById("im7").value = menace[1]["start"][3]
+    }
+    if(n==2){
+        document.getElementById("im2").value = menace[2]["start"][0]
+        document.getElementById("im4").value = menace[2]["start"][1]
+        document.getElementById("im6").value = menace[2]["start"][2]
+        document.getElementById("im8").value = menace[2]["start"][3]
+    }
+    document.getElementById("_"+n+"_ic_w").value = menace[n]["incentives"][1]
+    document.getElementById("_"+n+"_ic_d").value = menace[n]["incentives"][0]
+    document.getElementById("_"+n+"_ic_l").value = -menace[n]["incentives"][2]
+    document.getElementById("_"+n+"_includeall").checked = menace[n]["includeall"]
+    document.getElementById("_"+n+"_tweak_h").style.display = "block"
+    document.getElementById("_"+n+"_tweak_s").style.display = "none"
+}
+
+function hide_set(n){
+    document.getElementById("_"+n+"_tweak_h").style.display = "none"
+    document.getElementById("_"+n+"_tweak_s").style.display = "block"
+}
+
+function show_menace(n){
+    var output = ""
+    output += "<span id='_"+n+"_tweak_s'><a href='javascript:show_set("+n+")'>Adjust MENACE's settings</a></span>"
+    output += "<span id='_"+n+"_tweak_h' style='display:none'><a href='javascript:hide_set("+n+")'>Hide settings</a><br />"
+    output += "Inital marbles<br /><small>"
+    if(n==1){
+        output += "First Moves: <input size=1 id='im1' /> "
+        output += "Third Moves: <input size=1 id='im3' /><br />"
+        output += "Fifth Moves: <input size=1 id='im5' /> "
+        output += "Seventh Moves: <input size=1 id='im7'><br />"
+    }
+    if(n==2){
+        output += "Second Moves: <input size=1 id='im2' /> "
+        output += "Fourth Moves: <input size=1 id='im4' /><br />"
+        output += "Sixth Moves: <input size=1 id='im6' /> "
+        output += "Eighth Moves: <input size=1 id='im8'><br />"
+    }
+    output += "<input type='checkbox' id='_"+n+"_includeall'>Remove beads for symmetrically equivalent moves</small><br />"
+    output += "Incentives<br /><small>"
+    output += "Win: Add <input size=1 id='_"+n+"_ic_w' /> marbles<br/>"
+    output += "Draw: Add <input size=1 id='_"+n+"_ic_d' /> marbles<br/>"
+    output += "Lose: Take <input size=1 id='_"+n+"_ic_l' /> marbles<br/>"
+    output += "<form onsubmit='update_set("+n+");return false'>"
+    output += "<input type='submit' value='Update MENACE'>"
+    output += "</form>"
+    output += "<form onsubmit='update_set_r("+n+");return false'>"
+    output += "<input type='submit' value='Update and reset MENACE'>"
+    output += "</form>"
+    output += "</span>"
+
+    output += "</form>"
+    output += "</span>"
+    output += "<table>"
+    var cols = 0
+    var numb = 0
+    for(var k=0;k<menace[n]["orderedBoxes"].length;k++){
+        var key = menace[n]["orderedBoxes"][k]
+        if(cols == 0){
+            output += "<tr>"
+        }
+        cols += 1
+        numb += 1
+        output += "<td class='board' id='board"+key+"'>"+make_ox(key,n)+"</td>"
+        if(cols == 8){
+            output += "</tr>"
+            cols = 0
+        }
+    }
+    if(cols != 0){
+        output += "</tr>"
+    }
+    output += "</table><br /><br />"
+    output = "These are the " + numb + " matchboxes that power MENACE.<br />" + output
+    document.getElementById("_"+n+"_moves").innerHTML = output
+}
+
+function hide_menace(n){
+    document.getElementById("_"+n+"_moves").innerHTML = ""
+}
+
+// opponent moves
+function get_random_move(){
+    choices = []
+    for(var i=0;i<9;i++){
+        if(board[i] == 0){
+            choices.push(i)
+        }
+    }
+    return choices[Math.floor(Math.random()*choices.length)]
+}
+
+function get_perfect_move(){
+    return minimax(board,2).index
+}
+
+function play_human(where){
+    if(no_winner){
+        human_turn = false
+        board[where] = 2
+        document.getElementById("pos"+where).innerHTML = pieces[2]
+        check_win()
+        if(no_winner){
+            play_menace()
+        }
+    }
+}
+
+function make_move(plays){
+    total = 0
+    for(var i=0;i<plays.length;i++){
+        total += plays[i]
+    }
+    if(total == 0){
+        return "resign"
+    } else {
+        rnd = Math.floor(Math.random()*total)
+        total = 0
+        for(var i=0;i<plays.length;i++){
+            total += plays[i]
+            if(rnd < total){
+                return i
+            }
+        }
+    }
+}
+
+function minimax(newboard, player) {
+    var who_wins = winner(newboard)
+    if(who_wins!==false){
+        if(who_wins == 1){
+            return { score: -(10 + count(newboard,0)) }
+        } else if(who_wins == 2){
+            return { score: 10 + count(newboard,0) }
+        } else if(who_wins == 0){
+            return { score: 0 }
+        }
+    }
+    var choices = []
+    for(var i=0;i<9;i++){
+        if(newboard[i] == 0){
+            choices.push(i)
+        }
+    }
+    var moves = []
+    for(var i=0;i<choices.length;i++){
+        var move = {}
+        move.index = choices[i]
+        newboard[choices[i]] = player
+        result = minimax(newboard, 3-player)
+        move.score = result.score
+        newboard[choices[i]] = 0
+        moves.push(move)
+    }
+    var bestMove = 0
+    var bestScore = player == 1 ? 1000 : -1000
+    for(var i=0;i<moves.length;i++) {
+        if((player == 2 && moves[i].score > bestScore) || (player == 1 && moves[i].score < bestScore)) {
+            bestScore = moves[i].score
+            bestMove = i
+        }
+    }
+    var bestMoves = []
+    for(var i=0;i<moves.length;i++) {
+        if(moves[i].score == bestScore) {
+            bestMoves.push(i)
+        }
+    }
+    return moves[bestMoves[Math.floor(Math.random() * bestMoves.length)]]
+}
+
+
+// plotting
 function update_plot(){
-    oldlimits = [xmin,xmax,ymin,ymax]
+    var oldlimits = [xmin,xmax,ymin,ymax]
     updateplotlimits()
-    if(xmin==oldlimits[0] && xmax==oldlimits[1] && ymin==oldlimits[2] && ymax==oldlimits[3]){
+    if(xmin == oldlimits[0] && xmax == oldlimits[1] && ymin == oldlimits[2] && ymax == oldlimits[3]){
         draw_point(plotdata.length-1)
     } else {
         redraw_plot()
@@ -107,63 +647,52 @@ function update_plot(){
 }
 
 function redraw_plot(){
-    // 440 by 300
-    var c=document.getElementById("plot_here");
-    var ctx=c.getContext("2d");
-
-    ctx.clearRect(0, 0, c.width, c.height);
-
+    var c=document.getElementById("plot_here")
+    var ctx=c.getContext("2d")
+    ctx.clearRect(0, 0, c.width, c.height)
     updateplotlimits()
-
     for(var i=0;i<=5;i++){
-        y = ymin + (ymax-ymin)*i/5
-        ctx.textAlign = "right";
-        ctx.fillText(y, xtopx(0)-2, 4+ytopx(y));
+        var y = ymin + (ymax-ymin)*i/5
+        ctx.textAlign = "right"
+        ctx.fillText(y, xtopx(0)-2, 4+ytopx(y))
     }
-    ctx.fillText(0, xtopx(0)-2, 4+ytopx(0));
-
+    ctx.fillText(0, xtopx(0)-2, 4+ytopx(0))
     for(var i=1;i<=10;i++){
-        x = xmin + (xmax-xmin)*i/10
-        ctx.textAlign = "center";
-        ctx.fillText(x, xtopx(x), ytopx(0)+10);
+        var x = xmin + (xmax-xmin)*i/10
+        ctx.textAlign = "center"
+        ctx.fillText(x, xtopx(x), ytopx(0)+10)
     }
-
-    ctx.beginPath();
-    ctx.moveTo(xtopx(0),ytopx(ymax));
-    ctx.lineTo(xtopx(0),ytopx(ymin));
-    ctx.moveTo(xtopx(xmin),ytopx(0));
-    ctx.lineTo(xtopx(xmax),ytopx(0));
-    ctx.stroke();
-
+    ctx.beginPath()
+    ctx.moveTo(xtopx(0),ytopx(ymax))
+    ctx.lineTo(xtopx(0),ytopx(ymin))
+    ctx.moveTo(xtopx(xmin),ytopx(0))
+    ctx.lineTo(xtopx(xmax),ytopx(0))
+    ctx.stroke()
     ctx.save()
-    ctx.translate(220, 150);
-    ctx.rotate(-Math.PI/2);
-    ctx.textAlign = "center";
-    ctx.fillText("Change in number of bead in first box", 0, -205);
-    ctx.fillText("(3\xD7wins + losses - draws)", 0, -194);
-    ctx.restore();
-
-    ctx.textAlign = "right";
-    ctx.fillText("Number of games", xtopx(xmax), ytopx(0)+20);
-
-
+    ctx.translate(220, 150)
+    ctx.rotate(-Math.PI/2)
+    ctx.textAlign = "center"
+    ctx.fillText("Change in number of bead in first box", 0, -205)
+    ctx.fillText("(3\xD7wins + losses - draws)", 0, -194)
+    ctx.restore()
+    ctx.textAlign = "right"
+    ctx.fillText("Number of games", xtopx(xmax), ytopx(0)+20)
     for(var i=0;i<plotdata.length;i++){
         draw_point(i)
     }
 }
 
 function draw_point(i){
-    var c=document.getElementById("plot_here");
-    var ctx=c.getContext("2d");
-
-    ctx.beginPath();
-    ctx.arc(xtopx(i), ytopx(plotdata[i]), 3, 0, 2 * Math.PI, false);
-    ctx.fillStyle = '#FF0000';
-    ctx.fill();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = '#000000';
-    ctx.stroke();
-    ctx.fillStyle = '#000000';
+    var c=document.getElementById("plot_here")
+    var ctx=c.getContext("2d")
+    ctx.beginPath()
+    ctx.arc(xtopx(i), ytopx(plotdata[i]), 3, 0, 2 * Math.PI, false)
+    ctx.fillStyle = '#FF0000'
+    ctx.fill()
+    ctx.lineWidth = 1
+    ctx.strokeStyle = '#000000'
+    ctx.stroke()
+    ctx.fillStyle = '#000000'
 }
 
 function ytopx(_y){
@@ -174,650 +703,16 @@ function xtopx(_x){
     return 40+390*(_x-xmin)/(xmax-xmin)
 }
 
-function arrmin(arr){
-    out = arr[0]
-    for(var i=1;i<arr.length;i++){
-        out = Math.min(out,arr[i])
-    }
-    return out
-}
-
-function arrmax(arr){
-    out = arr[0]
-    for(var i=1;i<arr.length;i++){
-        out = Math.max(out,arr[i])
-    }
-    return out
-}
-
 function updateplotlimits(){
     ymin = arrmin(plotdata)
     ymin -= 10 + ymin % 10
     ymin = Math.min(-10,ymin)
     ymax = arrmax(plotdata) + 10
     ymax -= ymax % 10
-
     xmin = 0
     xmax = plotdata.length + 20
     xmax -= xmax % 20
 }
 
-function add_box(pos,dummy_moves){
-    rots=find_rotations(pos)
-    if(three(pos)=="0" && rots[0]==0){
-        if(menace["removesymm"]){
-            for(var i=1;i<rots.length;i++){
-                r=rotations[rots[i]]
-                for(var j=0;j<9;j++){
-                    if(r[j]!=j){
-                        dummy_moves[Math.min(j,r[j])]=0
-                    }
-                }
-            }
-        }
-        menace["orderedBoxes"][menace["orderedBoxes"].length] = pos
-        menace["boxes"][pos]=dummy_moves
-    }
-}
-
-function add_box2(pos,dummy_moves){
-    rots=find_rotations(pos)
-    if(three(pos)=="0" && rots[0]==0){
-        for(var i=1;i<rots.length;i++){
-            r=rotations[rots[i]]
-            for(var j=0;j<9;j++){
-                if(r[j]!=j){
-                    dummy_moves[Math.min(j,r[j])]=0
-                }
-            }
-        }
-        menace2["boxes"][pos]=dummy_moves
-    }
-}
-
-function find_rotation(pos){
-    max_rot=find_rotations(pos)
-    return(max_rot[Math.floor(Math.random()*max_rot.length)])
-}
-
-function find_rotations(pos){
-    max=-1
-    max_rot=Array()
-    for(var i=0;i<rotations.length;i++){
-        try_pos=apply_rotation(pos,rotations[i])
-        if(try_pos>max){
-            max=try_pos
-            max_rot=Array()
-        }
-        if(try_pos==max){
-            max_rot.push(i)
-        }
-    }
-    return(max_rot)
-}
-
-function say(stuff){
-    new_said=Array(stuff)
-    for(var i=0;i<9;i++){
-        new_said.push(said[i])
-    }
-    said=new_said
-    document.getElementById("list_here").innerHTML=said.join("<br />")
-}
-
-
-function add_win(n){
-    if(n==1){plotdata[plotdata.length] = plotdata[plotdata.length-1]+3} // win
-    if(n==2){plotdata[plotdata.length] = plotdata[plotdata.length-1]+1} // draw
-    if(n==3){plotdata[plotdata.length] = plotdata[plotdata.length-1]-1} // lose
-    wins_each[n-1]+=1
-    document.getElementById("dis"+n).innerHTML=wins_each[n-1]
-    update_plot()
-}
-
-function three(pos){
-    for(var i=0;i<pwns.length;i++){
-        if(pos[pwns[i][0]]!="0" && pos[pwns[i][0]]==pos[pwns[i][1]] && pos[pwns[i][1]]==pos[pwns[i][2]]){
-            return(parseInt(pos[pwns[i][0]]))
-        }
-    }
-    return(0)
-}
-
-function winner(board){
-    pos=board.join("")
-    th=three(pos)
-    if(th!=0){return(th)}
-    if(num_empty(board)==0){return(3)} //draw
-    return(0)
-}
-
-function check_win(){
-    who_wins=winner(board)
-    if(who_wins!=0){
-        if(who_wins==1){say("MENACE wins.")}
-        if(who_wins==2){
-            if(player=='h'){say("You win.")}
-            else if(player=='m'){say("MENACE2 wins.")}
-            else if(player=='r'){say("Random wins.")}
-            else if(player=='p'){say("Perfect wins.")}
-        }
-        if(who_wins==3){say("It's a draw.")}
-        do_win(who_wins)
-        human_turn=false
-    }
-}
-
-function do_win(who_wins){
-    no_winner=false
-    for(var i=0;i<9;i++){
-        if(board[i]==0){
-            document.getElementById("pos"+i).innerHTML=""
-        }
-    }
-    if(who_wins==1){menace_win()}
-    if(who_wins==2){menace_lose()}
-    if(who_wins==3){menace_draw()}
-    window.setTimeout(new_game,1000)
-}
-
-function array_fill(start,length,value){
-    out = Array()
-    for(var i=start;i<length;i++){
-        out[i]=value
-    }
-    return out
-}
-
-function reset_menace(){
-    if(!document.getElementById("includeall") || document.getElementById("includeall").checked){
-        menace["removesymm"] = true
-    } else {
-        menace["removesymm"] = false
-    }
-    plotdata = [0]
-    update_plot()
-    wins_each=Array(0,0,0)
-    for (var i = 1; i <= 3; i++) {
-        document.getElementById("dis" + i).innerHTML = wins_each[i - 1]
-    }
-
-    menace["orderedBoxes"] = Array()
-
-    // First moves
-    add_box("000000000",array_fill(0,9,menace["start"][0]))
-
-    // Third moves
-    for(var i=0;i<9;i++){for(var j=0;j<9;j++){if(i!=j){
-            pos=""
-            dummy_moves=Array()
-            for(var a=0;a<9;a++){
-                if(a==i){
-                    pos+="1"
-                    dummy_moves.push(0)
-                } else if(a==j){
-                    pos+="2"
-                    dummy_moves.push(0)
-                } else {
-                    pos+="0"
-                    dummy_moves.push(menace["start"][1])
-                }
-            }
-            add_box(pos,dummy_moves)
-    } }}
-
-    // Fifth moves
-    for(var i=0;i<9;i++){for(var k=0;k<i;k++){
-    for(var j=0;j<9;j++){if(i!=j && k!=j){for(var l=0;l<j;l++){if(i!=l && k!=l){
-            pos=""
-            dummy_moves=Array()
-            for(var a=0;a<9;a++){
-                if(a==i || a==k){
-                    pos+="1"
-                    dummy_moves.push(0)
-                } else if(a==j || a==l){
-                    pos+="2"
-                    dummy_moves.push(0)
-                } else {
-                    pos+="0"
-                    dummy_moves.push(menace["start"][2])
-                }
-            }
-            add_box(pos,dummy_moves)
-    }} }}}}
-
-    // Seventh moves
-    for(var i=0;i<9;i++){for(var k=0;k<i;k++){for(var m=0;m<k;m++){
-    for(var j=0;j<9;j++){if(i!=j && k!=j && m!=j){for(var l=0;l<j;l++){if(i!=l && k!=l && m!=l){for(var n=0;n<l;n++){if(i!=n && k!=n && m!=n){
-            pos=""
-            dummy_moves=Array()
-            for(var a=0;a<9;a++){
-                if(a==i || a==k || a==m){
-                    pos+="1"
-                    dummy_moves.push(0)
-                } else if(a==j || a==l || a==n){
-                    pos+="2"
-                    dummy_moves.push(0)
-                } else {
-                    pos+="0"
-                    dummy_moves.push(menace["start"][3])
-                }
-            }
-            add_box(pos,dummy_moves)
-    }}} }}}}}}
-    show_menace()
-    new_game()
-}
-
-function reset_menace2(){
-    // Second moves
-    for(var i=0;i<9;i++){
-            pos=""
-            dummy_moves=Array()
-            for(var a=0;a<9;a++){
-                if(a==i){
-                    pos+="1"
-                    dummy_moves.push(0)
-                } else {
-                    pos+="0"
-                    dummy_moves.push(menace2["start"][0])
-                }
-            }
-            add_box2(pos,dummy_moves)
-    }
-
-    // Fourth moves
-    for(var i=0;i<9;i++){for(var k=0;k<i;k++){
-    for(var j=0;j<9;j++){if(i!=j && k!=l){
-            pos=""
-            dummy_moves=Array()
-            for(var a=0;a<9;a++){
-                if(a==i || a==k){
-                    pos+="1"
-                    dummy_moves.push(0)
-                } else if(a==j){
-                    pos+="2"
-                    dummy_moves.push(0)
-                } else {
-                    pos+="0"
-                    dummy_moves.push(menace2["start"][1])
-                }
-            }
-            add_box2(pos,dummy_moves)
-    }} }}
-
-    // Sixth moves
-    for(var i=0;i<9;i++){for(var k=0;k<i;k++){for(var m=0;m<k;m++){
-    for(var j=0;j<9;j++){if(i!=j && k!=j){for(var l=0;l<j;l++){if(i!=l && k!=l){
-            pos=""
-            dummy_moves=Array()
-            for(var a=0;a<9;a++){
-                if(a==i || a==k || a==m){
-                    pos+="1"
-                    dummy_moves.push(0)
-                } else if(a==j || a==l){
-                    pos+="2"
-                    dummy_moves.push(0)
-                } else {
-                    pos+="0"
-                    dummy_moves.push(menace2["start"][2])
-                }
-            }
-            add_box2(pos,dummy_moves)
-    }}} }}}}
-
-    // Eighth moves
-    for(var i=0;i<9;i++){for(var k=0;k<i;k++){for(var m=0;m<k;m++){for(var o=0;o<m;o++){
-    for(var j=0;j<9;j++){if(i!=j && k!=j && m!=j){for(var l=0;l<j;l++){if(i!=l && k!=l && m!=l){for(var n=0;n<l;n++){if(i!=n && k!=n && m!=n){
-            pos=""
-            dummy_moves=Array()
-            for(var a=0;a<9;a++){
-                if(a==i || a==k || a==m || a==o){
-                    pos+="1"
-                    dummy_moves.push(0)
-                } else if(a==j || a==l || a==n){
-                    pos+="2"
-                    dummy_moves.push(0)
-                } else {
-                    pos+="0"
-                    dummy_moves.push(menace2["start"][3])
-                }
-            }
-            add_box2(pos,dummy_moves)
-    }}}} }}}}}}
-}
-
-function make_ox(pos){
-    output = "<center><table class='board'>"
-    str = pos.replace(/0/g," ")
-    str = str.replace(/1/g,"O")
-    str = str.replace(/2/g,"X")
-    for(var i=0;i<9;i++){
-        if(i%3==0){output+="<tr>"}
-        output += "<td id='"+pos+"-"+i+"' class='p"+i
-        if(str[i]==" "){
-            output += " num'>"+menace["boxes"][pos][i]+"</td>"
-        } else {
-            output += "'>"
-            if(str[i]=="O"){output+="&#9711;"}
-            if(str[i]=="X"){output+="&times;"}
-            output += "</td>"
-        }
-        if(i%3==2){output+="</tr>"}
-    }
-    output+="</table></center>"
-    return output
-}
-
-function show_set(){
-    document.getElementById("im1").value=parseInt(menace["start"][0])
-    document.getElementById("im3").value=parseInt(menace["start"][1])
-    document.getElementById("im5").value=parseInt(menace["start"][2])
-    document.getElementById("im7").value=parseInt(menace["start"][3])
-    document.getElementById("ic_w").value=parseInt(menace["incentives"][0])
-    document.getElementById("ic_d").value=parseInt(menace["incentives"][1])
-    document.getElementById("ic_l").value=parseInt(menace["incentives"][2])
-    document.getElementById("tweak_h").style.display="block"
-    document.getElementById("tweak_s").style.display="none"
-}
-function hide_set(){
-    document.getElementById("tweak_h").style.display="none"
-    document.getElementById("tweak_s").style.display="block"
-}
-function update_set_r(){
-    update_set()
-    reset_menace()
-    reset_menace2()
-}
-function update_set(){
-    menace["start"][0]=parseInt(document.getElementById("im1").value)
-    menace["start"][1]=parseInt(document.getElementById("im3").value)
-    menace["start"][2]=parseInt(document.getElementById("im5").value)
-    menace["start"][3]=parseInt(document.getElementById("im7").value)
-    menace["incentives"][0]=parseInt(document.getElementById("ic_w").value)
-    menace["incentives"][1]=parseInt(document.getElementById("ic_d").value)
-    menace["incentives"][2]=parseInt(document.getElementById("ic_l").value)
-    hide_set()
-}
-
-function show_menace(){
-    output=""
-    output+="<span id='tweak_s'><a href='javascript:show_set()'>Adjust MENACE's settings</a></span>"
-    output+="<span id='tweak_h' style='display:none'><a href='javascript:hide_set()'>Hide settings</a><br />"
-    output+="Inital marbles<br /><small>"
-    output+="First Moves: <input size=1 id='im1' /> "
-    output+="Third Moves: <input size=1 id='im3' /><br />"
-    output+="Fifth Moves: <input size=1 id='im5' /> "
-    output+="Seventh Moves: <input size=1 id='im7'><br />"
-    output+="<input type='checkbox' id='includeall'"
-    if(menace["removesymm"]){output+=" checked"}
-    output+=">Remove beads for symmetrically equivalent moves</small><br />"
-    output+="Incentives<br /><small>"
-    output+="Win: Add <input size=1 id='ic_w' /> marbles<br/>"
-    output+="Draw: Add <input size=1 id='ic_d' /> marbles<br/>"
-    output+="Lose: Take <input size=1 id='ic_l' /> marbles<br/>"
-    output+="<form onsubmit='update_set();return false'>"
-    output+="<input type='submit' value='Update MENACE'>"
-    output+="</form>"
-    output+="<form onsubmit='update_set_r();return false'>"
-    output+="<input type='submit' value='Update and reset MENACE'>"
-    output+="</form>"
-    output+="</span>"
-
-    output+="</form>"
-    output+="</span>"
-    output+="<table>"
-    cols=0
-    numb=0
-    for(var k=0;k<menace["orderedBoxes"].length;k++){
-        key = menace["orderedBoxes"][k]
-        if(cols==0){output+=("<tr>")}
-        cols+=1
-        numb+=1
-        output+=("<td class='board' id='board"+key+"'>"+make_ox(key)+"</td>")
-        if(cols==8){output+=("</tr>");cols=0}
-    }
-    if(cols!=0){output+=("</tr>")}
-    output+=("</table><br /><br />")
-    output="These are the "+numb+" matchboxes that power MENACE.<br />"+output
-    document.getElementById("moves").innerHTML=output
-}
-
-function update_box(key){
-    document.getElementById("board"+key).innerHTML=make_ox(key)
-}
-
-
-function box_add(pos,move,change){
-    menace["boxes"][pos][move]=Math.max(0,parseInt(change)+parseInt(menace["boxes"][pos][move]))
-    update_box(pos)
-}
-
-function box_add2(pos,move,change){
-    menace2["boxes"][pos][move]=Math.max(0,parseInt(change)+parseInt(menace2["boxes"][pos][move]))
-}
-
-function menace_win(){
-    for(var i=0;i<moves.length;i++){
-        box_add(moves[i][0],moves[i][1],menace["incentives"][0])
-    }
-    if(player=="m"){
-    for(var i=0;i<moves2.length;i++){
-        box_add2(moves2[i][0],moves2[i][1],-menace["incentives"][2])
-    }
-    }
-
-    add_win(1)
-}
-function menace_draw(){
-    for(var i=0;i<moves.length-1;i++){
-        box_add(moves[i][0],moves[i][1],menace["incentives"][1])
-    }
-    if(player=="m"){
-    for(var i=0;i<moves2.length;i++){
-        box_add2(moves2[i][0],moves2[i][1],menace["incentives"][1])
-    }
-    }
-    add_win(2)
-}
-function menace_lose(){
-    for(var i=0;i<moves.length;i++){
-        box_add(moves[i][0],moves[i][1],-menace["incentives"][2])
-    }
-    if(player=="m"){
-    for(var i=0;i<moves2.length;i++){
-        box_add2(moves2[i][0],moves2[i][1],menace["incentives"][0])
-    }
-    }
-    add_win(3)
-}
-
-function new_game(){
-    moves=Array()
-    moves2=Array()
-    board=Array(0,0,0,0,0,0,0,0,0)
-    no_winner=true
-    for(var i=0;i<9;i++){
-        document.getElementById("pos"+i).innerHTML="<form onsubmit='javascript:play_human("+i+");return false'><input type='submit' value=' '></form>"
-    }
-    play_menace()
-}
-
-function play_menace(){
-    if(num_empty(board)==1){
-        for(var i=0;i<9;i++){if(board[i]==0){inv_where=i}}
-    } else {
-        pos=board.join("")
-        which_rot=find_rotation(pos)
-        pos=apply_rotation(pos,rotations[which_rot])
-        plays=menace["boxes"][pos]
-        where=make_move(plays)
-        if(where=="resign"){return}
-        document.getElementById(pos+"-"+where).style.color="#FF0000"
-        inv_where=rotations[which_rot][where]
-        moves.push(Array(pos,where))
-    }
-    board[inv_where]=1
-    document.getElementById("pos"+inv_where).innerHTML="&#9711;"
-    check_win()
-    if(no_winner){
-        if(player=='r'){
-            play_random()
-        } else if(player=='m'){
-            play_menace2()
-        } else if(player=='h'){
-            human_turn=true
-        } else if(player=='p'){
-            play_perfect()
-        }
-    }
-}
-
-function play_menace2(){
-    pos=board.join("")
-    which_rot=find_rotation(pos)
-    pos=apply_rotation(pos,rotations[which_rot])
-    plays=menace2["boxes"][pos]
-    where=make_move2(plays)
-    inv_where=rotations[which_rot][where]
-    moves2.push(Array(pos,where))
-    board[inv_where]=2
-    document.getElementById("pos"+inv_where).innerHTML="&times;"
-    check_win()
-    if(no_winner){
-        window.setTimeout(play_menace,100)
-    }
-}
-
-function play_human(where){
-if(no_winner){
-    human_turn=false
-    board[where]=2
-    document.getElementById("pos"+where).innerHTML="&times;"
-    check_win()
-    if(no_winner){
-        play_menace()
-    }
-}}
-
-function play_random(){
-if(no_winner){
-    choices = Array()
-    for(var i=0;i<9;i++){
-        if(board[i]==0){choices[choices.length]=i;}
-    }
-    human_turn=false
-    where = choices[Math.floor(Math.random()*choices.length)]
-    board[where]=2
-    document.getElementById("pos"+where).innerHTML="&times;"
-    check_win()
-    if(no_winner){
-        window.setTimeout(play_menace,100)
-    }
-}}
-
-function play_perfect(){
-if(no_winner){
-    human_turn=false
-    where = minimax(board, 2).index
-    board[where]=2
-    document.getElementById("pos"+where).innerHTML="&times;"
-    check_win()
-    if(no_winner){
-        window.setTimeout(play_menace,100)
-    }
-}}
-
-function num_empty(board){
-    empty=0
-    for(var i=0;i<9;i++){
-        if(board[i]==0){empty+=1}
-    }
-    return(empty)
-}
-
-function make_move(plays){
-    total=0
-    for(var i=0;i<plays.length;i++){
-        total+=plays[i]
-    }
-    if(total==0){
-        say("MENACE resigns.")
-        do_win(2)
-        return "resign"
-    } else {
-        rnd = Math.floor(Math.random()*total)
-        total = 0
-        for(var i=0;i<plays.length;i++){
-            total+=plays[i]
-            if(rnd<total){return(i)}
-        }
-    }
-}
-
-function make_move2(plays){
-    total=0
-    for(var i=0;i<plays.length;i++){
-        total+=plays[i]
-    }
-    if(total==0){
-        say("MENACE2 resigns.")
-        do_win(1)
-    } else {
-        rnd = Math.floor(Math.random()*total)
-        total = 0
-        for(var i=0;i<plays.length;i++){
-            total+=plays[i]
-            if(rnd<total){return(i)}
-        }
-    }
-}
-
-function minimax(newboard, player) {
-    var who_wins = winner(newboard);
-    if (who_wins == 1) return { score: -(10 + num_empty(newboard)) };
-    else if (who_wins == 2) return { score: 10 + num_empty(newboard) };
-    else if (who_wins == 3) return { score: 0 };
-
-    var choices = Array();
-    for (var i = 0; i < 9; i++) {
-        if (newboard[i] == 0) { choices[choices.length] = i; }
-    }
-
-    var moves = Array();
-
-    for (var i = 0; i < choices.length; i++) {
-        var move = {};
-        move.index = choices[i];
-
-        newboard[choices[i]] = player;
-
-        result = minimax(newboard, player == 1 ? 2 : 1);
-        move.score = result.score;
-
-        newboard[choices[i]] = 0;
-
-        moves[moves.length] = move;
-    }
-
-    var bestMove = 0;
-    var bestScore = player == 1 ? 1000 : -1000;
-    for (var i = 0; i < moves.length; i++) {
-        if ((player == 2 && moves[i].score > bestScore) || (player == 1 && moves[i].score < bestScore)) {
-            bestScore = moves[i].score;
-            bestMove = i;
-        }
-    }
-
-    var bestMoves = Array();
-    for (var i = 0; i < moves.length; i++) {
-        if (moves[i].score == bestScore) {
-            bestMoves[bestMoves.length] = i;
-        }
-    }
-
-    return moves[bestMoves[Math.floor(Math.random() * bestMoves.length)]];
-}
-
-reset_menace()
-reset_menace2()
+// start game
+reset_menace("both")
