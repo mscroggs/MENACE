@@ -37,6 +37,7 @@ var menace = {
 
 // what is player 2?
 var player = 'h'
+document.getElementById("p2picker").value = "h"
 var whoA = {"h":"Human", "r":"Random", "m":"MENACE2", "p":"Perfect"}
 
 // plotting
@@ -474,7 +475,7 @@ function show_set(n){
     document.getElementById("_"+n+"_ic_w").value = menace[n]["incentives"][1]
     document.getElementById("_"+n+"_ic_d").value = menace[n]["incentives"][0]
     document.getElementById("_"+n+"_ic_l").value = -menace[n]["incentives"][2]
-    document.getElementById("_"+n+"_includeall").checked = menace[n]["includeall"]
+    document.getElementById("_"+n+"_includeall").checked = menace[n]["removesymm"]
     document.getElementById("_"+n+"_tweak_h").style.display = "block"
     document.getElementById("_"+n+"_tweak_s").style.display = "none"
 }
@@ -511,16 +512,16 @@ function show_menace(n){
     output += "Draw: Add <input size=1 id='_"+n+"_ic_d' /> marbles<br/>"
     output += "Lose: Take <input size=1 id='_"+n+"_ic_l' /> marbles<br/>"
     output += "<form onsubmit='update_set("+n+");return false'>"
-    output += "<input type='submit' value='Update MENACE'>"
+    output += "<input type='submit' value='Update "+menacename+"'>"
     output += "</form>"
     output += "<form onsubmit='update_set_r("+n+");return false'>"
-    output += "<input type='submit' value='Update and reset MENACE'>"
+    output += "<input type='submit' value='Update and reset "+menacename+"'>"
     output += "</form>"
     output += "</span>"
 
     output += "</form>"
     output += "</span>"
-    output += "<table>"
+    output += "<table class='moves'>"
     var cols = 0
     var numb = 0
     for(var k=0;k<menace[n]["orderedBoxes"].length;k++){

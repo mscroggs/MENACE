@@ -4,6 +4,7 @@
 </head>
 <body>
 <style type='text/css'>
+table.moves tr, table.moves {border:0}
 td.board {font-family:monospace;border:1px solid black;width:35px;height:35px;text-align:center;vertical-align:middle}
 td.num {font-weight:bold;color:#000000}
 table.board td {font-family:monospace;text-align:center;vertical-align:middle}
@@ -45,8 +46,8 @@ table.board td form {margin:0px}
     <td id='pos8' class='p8'></td>
 </tr>
 </table>
-<div class='players'>O: MENACE<br />X:<select onchange='setPlayer(this.value)'>
-<option selected value='h'>Human</option>
+<div class='players'>O: MENACE<br />X:<select id='p2picker' onchange='setPlayer(this.value)'>
+<option value='h'>Human</option>
 <option value='r'>Random</option>
 <option value='m'>MENACE2</option>
 <option value='p'>Perfect</option>
