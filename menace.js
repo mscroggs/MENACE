@@ -536,7 +536,11 @@ function show_menace(n){
         output += "</tr>"
     }
     output += "</table><br /><br />"
-    output = "These are the " + numb + " matchboxes that power MENACE.<br />" + output
+    var menacename = "MENACE"
+    if(n==2){
+        menacename += "2"
+    }
+    output = "These are the " + numb + " matchboxes that power "+menacename+".<br />" + output
     document.getElementById("_"+n+"_moves").innerHTML = output
 }
 
