@@ -485,8 +485,12 @@ function hide_set(n){
 }
 
 function show_menace(n){
+    var menacename = "MENACE"
+    if(n==2){
+        menacename += "2"
+    }
     var output = ""
-    output += "<span id='_"+n+"_tweak_s'><a href='javascript:show_set("+n+")'>Adjust MENACE's settings</a></span>"
+    output += "<span id='_"+n+"_tweak_s'><a href='javascript:show_set("+n+")'>Adjust "+menacename+"'s settings</a></span>"
     output += "<span id='_"+n+"_tweak_h' style='display:none'><a href='javascript:hide_set("+n+")'>Hide settings</a><br />"
     output += "Inital marbles<br /><small>"
     if(n==1){
@@ -536,10 +540,6 @@ function show_menace(n){
         output += "</tr>"
     }
     output += "</table><br /><br />"
-    var menacename = "MENACE"
-    if(n==2){
-        menacename += "2"
-    }
     output = "These are the " + numb + " matchboxes that power "+menacename+".<br />" + output
     document.getElementById("_"+n+"_moves").innerHTML = output
 }
