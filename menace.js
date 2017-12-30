@@ -775,8 +775,8 @@ function make_move2(plays){
 
 function minimax(newboard, player) {
     var who_wins = winner(newboard);
-    if (who_wins == 1) return { score: -10 };
-    else if (who_wins == 2) return { score: 10 };
+    if (who_wins == 1) return { score: -(10 + num_empty(newboard)) };
+    else if (who_wins == 2) return { score: 10 + num_empty(newboard) };
     else if (who_wins == 3) return { score: 0 };
 
     var choices = Array();
