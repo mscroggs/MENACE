@@ -35,6 +35,7 @@ var menace = {
 // what is player 2?
 var player = 'h'
 document.getElementById("p2picker").value = "h"
+document.getElementById("speeddiv").style.display = "none"
 var whoA = {"h":"Human", "r":"Random", "m":"MENACE2", "p":"Perfect"}
 
 // plotting
@@ -126,6 +127,11 @@ function setPlayer(setTo){
     } else {
         hide_menace(2)
     }
+    if(setTo!="h"){
+        document.getElementById("speeddiv").style.display = "block"
+    } else {
+        document.getElementById("speeddiv").style.display = "none"
+    }
     if(setTo!="h" && human_turn){
         play_opponent()
     }
@@ -175,7 +181,11 @@ function do_win(who_wins){
         }
     }
     menace_add_beads(who_wins)
-    window.setTimeout(new_game, -parseInt(document.getElementById("speed_slider").value))
+    if(player == "h"){
+        window.setTimeout(new_game, 1000)
+    } else {
+        window.setTimeout(new_game, -parseInt(document.getElementById("speed_slider").value))
+    }
 }
 
 function play_menace(){
