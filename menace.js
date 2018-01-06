@@ -175,7 +175,7 @@ function do_win(who_wins){
         }
     }
     menace_add_beads(who_wins)
-    window.setTimeout(new_game,1000)
+    window.setTimeout(new_game, -parseInt(document.getElementById("speed_slider").value))
 }
 
 function play_menace(){
@@ -216,7 +216,7 @@ function play_opponent(){
     document.getElementById("pos"+where).innerHTML = pieces[2]
     check_win()
     if(no_winner){
-        window.setTimeout(play_menace,100)
+        window.setTimeout(play_menace, -parseInt(document.getElementById("speed_slider").value)/10)
     }
 }
 

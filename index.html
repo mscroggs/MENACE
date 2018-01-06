@@ -24,6 +24,7 @@ table.board td.p4 {border:1px solid grey;}
 .dis {font-size:32px}
 table.board td form {margin:0px}
 .players {position:absolute;left:280px;top:30px}
+.speed {position:absolute;top:90px;left:280px;text-align:left}
 </style>
 <span style='position:absolute;right:5px'>
 <span id='_1_moves'></span>
@@ -55,6 +56,9 @@ table.board td form {margin:0px}
 <div class='wins' id='n1'><small>MENACE Wins</small><br /><span class='dis' id='dis1'>0</span></div>
 <div class='wins' id='n2'><small>Draws</small><br /><span class='dis' id='dis0'>0</span></div>
 <div class='wins' id='n3'><small><span id='who'>Human</span> Wins</small><br /><span class='dis' id='dis2'>0</span></div>
+<div class="speed">
+  Speed:<br /><input type="range" min="-1000" max="-10" value="-1000" class="slider" id="speed_slider">
+</div>
 <div class='summary' id='list_here'></div>
 <canvas class='graph' id='plot_here' width='440' height='300'></canvas>
 <script type='text/javascript' src='menace.js'></script>
