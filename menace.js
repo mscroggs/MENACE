@@ -126,10 +126,6 @@ function setPlayer(setTo){
     } else {
         hide_menace(2)
     }
-    speed_elems = document.getElementsByClassName('speed')
-    for(var i=0;i<speed_elems.length;i++){
-        speed_elems[i].style.visibility = (setTo=="h" ? "hidden" : "visible")
-    }
     if(setTo!="h" && human_turn){
         play_opponent()
     }
