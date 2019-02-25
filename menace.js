@@ -379,7 +379,7 @@ function update_set(n){
     if(n==2){
         menace[2]["start"][0] = parseInt(document.getElementById("im2").value)
         menace[2]["start"][1] = parseInt(document.getElementById("im4").value)
-        menace[2]["start"][2] = parseInt(document.getElementById("im5").value)
+        menace[2]["start"][2] = parseInt(document.getElementById("im6").value)
         menace[2]["start"][3] = parseInt(document.getElementById("im8").value)
     }
     menace[n]["incentives"][1] = parseInt(document.getElementById("_"+n+"_ic_w").value)
