@@ -46,6 +46,7 @@ var ymin = 0
 var ymax = 0
 
 // game data
+var playagain = true
 var wins_each = [0,0,0]
 var board = [0,0,0,0,0,0,0,0,0]
 var no_winner = true
@@ -109,14 +110,16 @@ function count(arr, value){
 
 // game functions
 function new_game(){
-    menace[1]["moves"] = []
-    menace[2]["moves"] = []
-    board = [0,0,0,0,0,0,0,0,0]
-    no_winner = true
-    for(var i=0;i<9;i++){
-        document.getElementById("pos"+i).innerHTML = "<form onsubmit='javascript:play_human("+i+");return false'><input type='submit' value=' '></form>"
+    if(playagain){
+        menace[1]["moves"] = []
+        menace[2]["moves"] = []
+        board = [0,0,0,0,0,0,0,0,0]
+        no_winner = true
+        for(var i=0;i<9;i++){
+            document.getElementById("pos"+i).innerHTML = "<form onsubmit='javascript:play_human("+i+");return false'><input type='submit' value=' '></form>"
+        }
+        play_menace()
     }
-    play_menace()
 }
 
 function setPlayer(setTo){
@@ -191,6 +194,11 @@ function do_win(who_wins){
 function play_menace(){
     where = get_menace_move(1)
     if(where=="resign"){
+        if(count(board,0)==9){
+            say("MENACE has run out of beads in the first box and refuses to play.")
+            playagain = false
+            return
+        }
         do_win(2)
         say("MENACE resigns")
         return
@@ -332,6 +340,7 @@ function order_boxes(n){
 }
 
 function reset_menace(n){
+    playagain = true
     for(var i=1;i<=2;i++){
         if(n==i || n=="both"){
             menace[i]["orderedBoxes"] = [[],[],[],[]]
@@ -341,6 +350,7 @@ function reset_menace(n){
     if(n == 1 || n == "both"){
         plotdata = [0]
         update_plot()
+        redraw_plot()
         wins_each = [0,0,0]
         for (var i=0;i<3;i++) {
             document.getElementById("dis"+i).innerHTML = wins_each[i]
