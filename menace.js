@@ -510,7 +510,7 @@ function show_menace(n){
     var output = ""
     output += "<span id='_"+n+"_tweak_s'><a href='javascript:show_set("+n+")'>Adjust "+menacename+"'s settings</a></span>"
     output += "<span id='_"+n+"_tweak_h' style='display:none'><a href='javascript:hide_set("+n+")'>Hide settings</a><br />"
-    output += "Inital marbles<br /><small>"
+    output += "Inital beads<br /><small>"
     if(n==1){
         output += "First Moves: <input size=1 id='im1' /> "
         output += "Third Moves: <input size=1 id='im3' /><br />"
@@ -525,9 +525,9 @@ function show_menace(n){
     }
     output += "<input type='checkbox' id='_"+n+"_includeall'>Remove beads for symmetrically equivalent moves</small><br />"
     output += "Incentives<br /><small>"
-    output += "Win: Add <input size=1 id='_"+n+"_ic_w' /> marbles<br/>"
-    output += "Draw: Add <input size=1 id='_"+n+"_ic_d' /> marbles<br/>"
-    output += "Lose: Take <input size=1 id='_"+n+"_ic_l' /> marbles<br/>"
+    output += "Win: Add <input size=1 id='_"+n+"_ic_w' /> beads<br/>"
+    output += "Draw: Add <input size=1 id='_"+n+"_ic_d' /> beads<br/>"
+    output += "Lose: Take <input size=1 id='_"+n+"_ic_l' /> beads<br/>"
     output += "<form onsubmit='update_set("+n+");return false'>"
     output += "<input type='submit' value='Update "+menacename+"'>"
     output += "</form>"
