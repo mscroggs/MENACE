@@ -21,7 +21,7 @@ table.board td.p4 {border:1px solid grey;}
 .wins#n1 {left:35px}
 .wins#n2 {left:195px}
 .wins#n3 {left:355px}
-.dis {font-size:32px}
+.dis {font-size:32px;padding-top:2px}
 table.board td form {margin:0px}
 .players {position:absolute;left:280px;top:30px}
 .speed {position:absolute;top:90px;left:280px;text-align:left}
@@ -53,9 +53,9 @@ table.board td form {margin:0px}
 <option value='m'>MENACE2</option>
 <option value='p'>Perfect</option>
 </select></div>
-<div class='wins' id='n1'><small>MENACE Wins</small><br /><span class='dis' id='dis1'>0</span></div>
-<div class='wins' id='n2'><small>Draws</small><br /><span class='dis' id='dis0'>0</span></div>
-<div class='wins' id='n3'><small><span id='who'>Human</span> Wins</small><br /><span class='dis' id='dis2'>0</span></div>
+<div class='wins' id='n1'><small>MENACE Wins</small><div class='dis' id='dis1'>0</div></div>
+<div class='wins' id='n2'><small>Draws</small><div class='dis' id='dis0'>0</div></div>
+<div class='wins' id='n3'><small><span id='who'>Human</span> Wins</small><div class='dis' id='dis2'>0</div></div>
 <div class="speed" id='speeddiv'>
   Speed:<br /><input type="range" min="-1000" max="-10" value="-1000" class="slider" id="speed_slider">
 </div>
