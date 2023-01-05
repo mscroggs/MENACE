@@ -509,35 +509,38 @@ function show_menace(n){
     }
     var output = ""
     output += "<span id='_"+n+"_tweak_s'><a href='javascript:show_set("+n+")'>Adjust "+menacename+"'s settings</a></span>"
-    output += "<span id='_"+n+"_tweak_h' style='display:none'><a href='javascript:hide_set("+n+")'>Hide settings</a><br />"
-    output += "Inital marbles<br /><small>"
+    output += "<span class='menace_settings' id='_"+n+"_tweak_h' style='display:none'><a href='javascript:hide_set("+n+")'>Hide settings</a>"
+    output += "<div class='menace_settings_title'>Number of beads in each box before any games are played</div>"
     if(n==1){
-        output += "First Moves: <input size=1 id='im1' /> "
+        output += "First Moves: <input size=1 id='im1' /><br />"
         output += "Third Moves: <input size=1 id='im3' /><br />"
-        output += "Fifth Moves: <input size=1 id='im5' /> "
+        output += "Fifth Moves: <input size=1 id='im5' /><br />"
         output += "Seventh Moves: <input size=1 id='im7'><br />"
     }
     if(n==2){
-        output += "Second Moves: <input size=1 id='im2' /> "
+        output += "Second Moves: <input size=1 id='im2' /><br />"
         output += "Fourth Moves: <input size=1 id='im4' /><br />"
-        output += "Sixth Moves: <input size=1 id='im6' /> "
+        output += "Sixth Moves: <input size=1 id='im6' /><br />"
         output += "Eighth Moves: <input size=1 id='im8'><br />"
     }
-    output += "<input type='checkbox' id='_"+n+"_includeall'>Remove beads for symmetrically equivalent moves</small><br />"
-    output += "Incentives<br /><small>"
-    output += "Win: Add <input size=1 id='_"+n+"_ic_w' /> marbles<br/>"
-    output += "Draw: Add <input size=1 id='_"+n+"_ic_d' /> marbles<br/>"
-    output += "Lose: Take <input size=1 id='_"+n+"_ic_l' /> marbles<br/>"
+    output += "<label><input type='checkbox' id='_"+n+"_includeall'>Treat symmetrically equivalent moves as if they are the same move</label><br />"
+    output += "<div class='menace_settings_title'>Incentives</div>"
+    output += "Win: Add <input size=1 id='_"+n+"_ic_w' /> beads<br/>"
+    output += "Draw: Add <input size=1 id='_"+n+"_ic_d' /> beads<br/>"
+    output += "Lose: Take <input size=1 id='_"+n+"_ic_l' /> beads<br/>"
+    output += "<br />To save these settings, press this button:"
     output += "<form onsubmit='update_set("+n+");return false'>"
     output += "<input type='submit' value='Update "+menacename+"'>"
     output += "</form>"
+    output += "<br />To save these settings and reset MENACE to their initial state before and games are played, press this button:"
     output += "<form onsubmit='update_set_r("+n+");return false'>"
     output += "<input type='submit' value='Update and reset "+menacename+"'>"
     output += "</form>"
+    output += "<br /><a href='javascript:hide_set("+n+")'>Hide settings</a>"
     output += "</span>"
 
     output += "</form>"
-    output += "</span>"
+    output += "</div><br />"
     output += "<table class='moves'>"
     var cols = 0
     var numb = 0
@@ -558,7 +561,7 @@ function show_menace(n){
         output += "</tr>"
     }
     output += "</table><br /><br />"
-    output = "These are the " + numb + " matchboxes that power "+menacename+".<br />" + output
+    output = "These are the " + numb + " matchboxes that power "+menacename+".<br /><br />" + output
     document.getElementById("_"+n+"_moves").innerHTML = output
 }
 
