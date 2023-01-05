@@ -541,7 +541,7 @@ function show_menace(n){
     output += "</span>"
 
     output += "</form>"
-    output += "</div><br />"
+    output += "</div>"
     output += "<table class='moves'>"
     var cols = 0
     var numb = 0
