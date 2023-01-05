@@ -571,7 +571,7 @@ function show_menace(n){
             cols += 1
             numb += 1
             output += "<td class='board' id='board"+key+"'>"+make_ox(key,n)+"</td>"
-            if(cols == 8){
+            if(cols == 7){
                 output += "</tr>"
                 cols = 0
             }
