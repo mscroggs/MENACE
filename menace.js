@@ -543,46 +543,48 @@ function show_menace(n){
     output += "</form>"
     output += "</div>"
     output += "<br />";
+    var boxout = ""
     var numb = 0
     for(var move=0;move<menace[n]["orderedBoxes"].length;move++){
         var moven = move * 2 + n;
         if(moven == 1){
-            output += "This box is for the first move:";
+            boxout += "This box is for the first move:";
         } else {
-            output += "These "+menace[n]["orderedBoxes"][move].length+" boxes are for the "
-            if(moven == 2){output += "second"} else
-            if(moven == 3){output += "third"} else
-            if(moven == 4){output += "fourth"} else
-            if(moven == 5){output += "fifth"} else
-            if(moven == 6){output += "sixth"} else
-            if(moven == 7){output += "seventh"} else
-            if(moven == 8){output += "eighth"} else
-            if(moven == 9){output += "ninth"}
-            output += " move:"
+            boxout += "These "+menace[n]["orderedBoxes"][move].length+" boxes are for the "
+            if(moven == 2){boxout += "second"} else
+            if(moven == 3){boxout += "third"} else
+            if(moven == 4){boxout += "fourth"} else
+            if(moven == 5){boxout += "fifth"} else
+            if(moven == 6){boxout += "sixth"} else
+            if(moven == 7){boxout += "seventh"} else
+            if(moven == 8){boxout += "eighth"} else
+            if(moven == 9){boxout += "ninth"}
+            boxout += " move:"
         }
-        output += "<br />";
+        boxout += "<br />";
         var cols = 0
-        output += "<center><table class='moves'>"
+        boxout += "<center><table class='moves'>"
         for(var k=0;k<menace[n]["orderedBoxes"][move].length;k++){
             var key = menace[n]["orderedBoxes"][move][k]
             if(cols == 0){
-                output += "<tr>"
+                boxout += "<tr>"
             }
             cols += 1
             numb += 1
-            output += "<td class='board' id='board"+key+"'>"+make_ox(key,n)+"</td>"
+            boxout += "<td class='board' id='board"+key+"'>"+make_ox(key,n)+"</td>"
             if(cols == 7){
-                output += "</tr>"
+                boxout += "</tr>"
                 cols = 0
             }
         }
         if(cols != 0){
-            output += "</tr>"
+            boxout += "</tr>"
         }
-        output += "</table></center><br /><br />"
+        boxout += "</table></center><br /><br />"
     }
+    output += "This box shows all " + numb + " matchboxes that make up "+menacename+".<br /><br />"
+    output += boxout
     output += "<br /><br />";
-    output = "This box shows all " + numb + " matchboxes that power "+menacename+".<br /><br />" + output
     document.getElementById("_"+n+"_moves").innerHTML = output
 }
 
