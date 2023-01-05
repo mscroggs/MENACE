@@ -508,8 +508,8 @@ function show_menace(n){
         menacename += "2"
     }
     var output = ""
-    output += "<span id='_"+n+"_tweak_s'><a href='javascript:show_set("+n+")'>Adjust "+menacename+"'s settings</a></span>"
-    output += "<span class='menace_settings' id='_"+n+"_tweak_h' style='display:none'><a href='javascript:hide_set("+n+")'>Hide settings</a>"
+    output += "<span id='_"+n+"_tweak_s'><center><a href='javascript:show_set("+n+")'>Adjust "+menacename+"'s settings</a></center></span>"
+    output += "<span class='menace_settings' id='_"+n+"_tweak_h' style='display:none'><center><a href='javascript:hide_set("+n+")'>Hide settings</center></a>"
     output += "<div class='menace_settings_title'>Number of beads in each box before any games are played</div>"
     if(n==1){
         output += "First Moves: <input size=1 id='im1' /><br />"
@@ -537,12 +537,12 @@ function show_menace(n){
     output += "<form onsubmit='update_set_r("+n+");return false'>"
     output += "<input type='submit' value='Update and reset "+menacename+"'>"
     output += "</form>"
-    output += "<br /><a href='javascript:hide_set("+n+")'>Hide settings</a>"
+    output += "<br /><center><a href='javascript:hide_set("+n+")'>Hide settings</center></a>"
     output += "</span>"
 
     output += "</form>"
     output += "</div>"
-    output += "<table class='moves'>"
+    output += "<center><table class='moves'>"
     var cols = 0
     var numb = 0
     for(var k=0;k<menace[n]["orderedBoxes"].length;k++){
@@ -561,8 +561,8 @@ function show_menace(n){
     if(cols != 0){
         output += "</tr>"
     }
-    output += "</table><br /><br />"
-    output = "These are the " + numb + " matchboxes that power "+menacename+".<br /><br />" + output
+    output += "</table></center><br /><br />"
+    output = "This box shows all " + numb + " matchboxes that power "+menacename+".<br /><br />" + output
     document.getElementById("_"+n+"_moves").innerHTML = output
 }
 
