@@ -1,16 +1,16 @@
-/************************************/
-/*             MENACE               */
-/*     Machine Educable Noughts     */
-/*       and Crosses Engine         */
-/************************************/
-/* Based on the first MENACE built  */
-/* by Donald Michie in 1960 using   */
-/* 304 matchboxes.                  */
-/************************************/
-/* This implementation was written  */
-/*               by Matthew Scroggs */
-/* http://www.mscroggs.co.uk/menace */
-/************************************/
+/*************************************/
+/*               MENACE              */
+/*     Machine Educable Noughts      */
+/*         and Crosses Engine        */
+/*************************************/
+/* Based on the first MENACE built   */
+/* by Donald Michie in 1960 using    */
+/* 304 matchboxes.                   */
+/*************************************/
+/* This implementation was written   */
+/*                by Matthew Scroggs */
+/* https://www.mscroggs.co.uk/menace */
+/*************************************/
 
 // MENACEs
 var menace = {
@@ -336,7 +336,7 @@ function search_moves(b, n){
 }
 
 function order_boxes(n){
-    menace[n]["orderedBoxes"] = menace[n]["orderedBoxes"][0].concat(menace[n]["orderedBoxes"][1],menace[n]["orderedBoxes"][2],menace[n]["orderedBoxes"][3])
+    //menace[n]["orderedBoxes"] = menace[n]["orderedBoxes"][0].concat(menace[n]["orderedBoxes"][1],menace[n]["orderedBoxes"][2],menace[n]["orderedBoxes"][3])
 }
 
 function reset_menace(n){
@@ -542,26 +542,46 @@ function show_menace(n){
 
     output += "</form>"
     output += "</div>"
-    output += "<center><table class='moves'>"
-    var cols = 0
+    output += "<br />";
     var numb = 0
-    for(var k=0;k<menace[n]["orderedBoxes"].length;k++){
-        var key = menace[n]["orderedBoxes"][k]
-        if(cols == 0){
-            output += "<tr>"
+    for(var move=0;move<menace[n]["orderedBoxes"].length;move++){
+        var moven = move * 2 + n;
+        if(moven == 1){
+            output += "This box is for the first move:";
+        } else {
+            output += "These "+menace[n]["orderedBoxes"][move].length+" boxes are for the "
+            if(moven == 2){output += "second"} else
+            if(moven == 3){output += "third"} else
+            if(moven == 4){output += "fourth"} else
+            if(moven == 5){output += "fifth"} else
+            if(moven == 6){output += "sixth"} else
+            if(moven == 7){output += "seventh"} else
+            if(moven == 8){output += "eighth"} else
+            if(moven == 9){output += "ninth"}
+            output += " move:"
         }
-        cols += 1
-        numb += 1
-        output += "<td class='board' id='board"+key+"'>"+make_ox(key,n)+"</td>"
-        if(cols == 8){
+        output += "<br />";
+        var cols = 0
+        output += "<center><table class='moves'>"
+        for(var k=0;k<menace[n]["orderedBoxes"][move].length;k++){
+            var key = menace[n]["orderedBoxes"][move][k]
+            if(cols == 0){
+                output += "<tr>"
+            }
+            cols += 1
+            numb += 1
+            output += "<td class='board' id='board"+key+"'>"+make_ox(key,n)+"</td>"
+            if(cols == 8){
+                output += "</tr>"
+                cols = 0
+            }
+        }
+        if(cols != 0){
             output += "</tr>"
-            cols = 0
         }
+        output += "</table></center><br /><br />"
     }
-    if(cols != 0){
-        output += "</tr>"
-    }
-    output += "</table></center><br /><br />"
+    output += "<br /><br />";
     output = "This box shows all " + numb + " matchboxes that power "+menacename+".<br /><br />" + output
     document.getElementById("_"+n+"_moves").innerHTML = output
 }
