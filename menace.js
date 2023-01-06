@@ -508,8 +508,8 @@ function show_menace(n){
         menacename += "2"
     }
     var output = ""
-    output += "<span id='_"+n+"_tweak_s'><center><a href='javascript:show_set("+n+")'>Adjust "+menacename+"'s settings</a></center></span>"
-    output += "<span class='menace_settings' id='_"+n+"_tweak_h' style='display:none'><center><a href='javascript:hide_set("+n+")'>Hide settings</center></a>"
+    output += "<span id='_"+n+"_tweak_s'><center><a href='javascript:show_set("+n+")'>&#x25BC; Show "+menacename+"'s settings &#x25BC;</a></center></span>"
+    output += "<span class='menace_settings' id='_"+n+"_tweak_h' style='display:none'><center><a href='javascript:hide_set("+n+")'>&#x25B2; Hide "+menacename+"'s settings &#x25B2;</center></a>"
     output += "<div class='menace_settings_title'>Number of beads in each box before any games are played</div>"
     if(n==1){
         output += "First Moves: <input size=1 id='im1' /><br />"
@@ -537,7 +537,7 @@ function show_menace(n){
     output += "<form onsubmit='update_set_r("+n+");return false'>"
     output += "<input type='submit' value='Update and reset "+menacename+"'>"
     output += "</form>"
-    output += "<br /><center><a href='javascript:hide_set("+n+")'>Hide settings</center></a>"
+    output += "<br /><center><a href='javascript:hide_set("+n+")'>&#x25B2; Hide "+menacename+"'s settings &#x25B2;</center></a>"
     output += "</span>"
 
     output += "</form>"
